@@ -1,4 +1,7 @@
-# Stand-Bye
+# Stand-Bye cross-platform
+
+Dies hier ist ein Versuch, Stand-Bye! mithilfe der Mono-Runtime auch auf anderen Plattformen (sprich: MacOS und Linux) zur verfügung zu stellen.
+
 Sag "Bye" zu Umweltverschmutzung und "Bye" zu Komfortverlust!
 Unser JugendForscht Projekt 2016: Die nächste umweltfreundliche und komfortfreundliche Generation des Energiesparens!
 
