@@ -77,7 +77,7 @@ float SystemAccess::getHDDUsage()
 void SystemAccess::reloadNetworkAdapters()
 {
 	perfNETs = gcnew List<PerformanceCounter^>;
-	for each(std::string name in SystemAccess::GetNetAdapterNames()) {
+	for each(String^ name in SystemAccess::GetNetAdapterNames()) {
 		perfNETs->Add(gcnew PerformanceCounter("Network Interface", "Bytes Total/sec", gcnew String(name.c_str())));
 	}
 }
@@ -130,8 +130,8 @@ void SystemAccess::StartESM(SettingsProvider^ p)
 	}
 }
 
-std::vector<std::string> SystemAccess::GetRunningProccesses() {
-	std::vector<std::string> list;
+List<String^>^ SystemAccess::GetRunningProccesses() {
+	List<String^> ^list;
 	const size_t maxPids = 1024;
 
 	DWORD pids[maxPids] = {};
@@ -458,7 +458,7 @@ String^ SystemAccess::getStandByeFolderPath()
 	}
 }
 
-System::Drawing::Bitmap ^ SystemAccess::getIconOfProcess(std::string path)
+System::Drawing::Bitmap ^ SystemAccess::getIconOfProcess(String^ path)
 {
 	SHFILEINFOW* stFileInfo = new SHFILEINFOW();
 	std::wstring wpath = std::wstring(path.begin(), path.end());
@@ -501,9 +501,9 @@ bool SystemAccess::inDebugMode()
 	return false;
 }
 
-std::vector<std::string> SystemAccess::GetNetAdapterNames() {
-	System::String ^filter = gcnew System::String("MS TCP Loopback interface");
-	std::vector<std::string> *nics = new std::vector<std::string>();
+List<String^> ^SystemAccess::GetNetAdapterNames() {
+	System::String ^filter = "MS TCP Loopback interface";
+	List<String^> ^nics = gcnew List<String^>();
 	PerformanceCounterCategory^ category = gcnew PerformanceCounterCategory("Network Interface");
 	LOG("Get Network Adapter Names:");
 	if (category->GetInstanceNames() != __nullptr)
@@ -512,12 +512,12 @@ std::vector<std::string> SystemAccess::GetNetAdapterNames() {
 		{
 			if (!nic->Equals(filter))
 			{
-				nics->push_back(BasicFunc::StringToString(nic));
+				nics->Add(nic);
 				LOG("\t" + nic);
 			}
 		}
 	}
-	return *nics;
+	return nics;
 }
 
 float SystemAccess::GetLastInputTime() {

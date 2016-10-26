@@ -177,11 +177,11 @@ bool mainApplication::isSystemBusy(SystemMetricWatcher^ watcher)
 
 	//Check if an exception process is running
 	boolean exception_process_running = false;
-	for each(std::string process in settings_provider->getProcessList()) {
-		String^ ProcessName = System::IO::Path::GetFileName(gcnew String(process.c_str()));
+	for each(String^ process in settings_provider->getProcessList()) {
+		String^ ProcessName = System::IO::Path::GetFileName(process);
 
-		for each(std::string running_process in SystemAccess::GetRunningProccesses()) {
-			String^ RunningProcessName = System::IO::Path::GetFileName(gcnew String(running_process.c_str()));
+		for each(String^ running_process in SystemAccess::GetRunningProccesses()) {
+			String^ RunningProcessName = System::IO::Path::GetFileName(running_process);
 
 			if (ProcessName == RunningProcessName) {
 				//One Exception Process is running

@@ -50,11 +50,11 @@ public:
 
 	static void StartESM(SettingsProvider^);
 
-	static List<std::string> GetNetAdapterNames();
+	static List<String^> GetNetAdapterNames();
 
 	static float GetLastInputTime();
 
-	static List<std::string> GetRunningProccesses();
+	static List<String^>^ GetRunningProccesses();
 
 	static void SetPresentationMode(boolean value);
 
@@ -80,7 +80,7 @@ public:
 
 	static String^ getStandByeFolderPath();
 
-	static System::Drawing::Bitmap^ getIconOfProcess(std::string path);
+	static System::Drawing::Bitmap^ getIconOfProcess(String^ path);
 
 	static bool isPortable();
 

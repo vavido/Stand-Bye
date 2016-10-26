@@ -40,7 +40,7 @@ System::Void ProcessSelectionForm::metroButtonCancel_Click(System::Object^, Syst
 	this->Close();
 }
 System::Void ProcessSelectionForm::ProcessSelectioNForm_OnShown(System::Object ^, System::EventArgs ^) {
-	for each(std::string path in SystemAccess::GetRunningProccesses()) {
+	for each(String^ path in SystemAccess::GetRunningProccesses()) {
 		listViewProc->Items->Add(gcnew ProcessItem(path, listViewProc));
 		Application::DoEvents();
 	}

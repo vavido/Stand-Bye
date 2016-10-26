@@ -94,7 +94,7 @@ void DebugForm::RefreshUISlow()
 	listViewProc->SmallImageList = imglistSmall;
 	listViewProc->LargeImageList = imglistLarge;
 
-	for each(std::string path in SystemAccess::GetRunningProccesses()) {
+	for each(String^ path in SystemAccess::GetRunningProccesses()) {
 		listViewProc->Items->Add(gcnew ProcessItem(path, listViewProc));
 	}
 }

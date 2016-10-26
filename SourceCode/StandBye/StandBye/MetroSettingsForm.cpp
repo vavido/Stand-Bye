@@ -393,7 +393,7 @@ void StandBye::MetroSettingsForm::loadSettings()
 	//Load Processes
 	refreshIcons();
 	listViewProc->Items->Clear();
-	for each(std::string str in  settings_provider->getProcessList()) {
+	for each(String^ str in  settings_provider->getProcessList()) {
 		listViewProc->Items->Add(gcnew ProcessItem(str, listViewProc));
 	}
 	listViewProc->Update();

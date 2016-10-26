@@ -16,7 +16,6 @@ using System::String;
 ref class BasicFunc {
 public:
 
-
 	///<summary>Returns an metro font with specified size in points</summary>
 	static System::Drawing::Font^ getMetroFont(float size);
 
@@ -25,9 +24,6 @@ public:
 
 	///<summary>Logs an specified statement or event.</summary>
 	static void Log(String^  text);
-
-	///<summary>Logs an specified statement or event.</summary>
-	static void Log(String^ text);
 
 	///<summary>Logs an exception</summary>
 	static void Log(System::Exception^ exception);
