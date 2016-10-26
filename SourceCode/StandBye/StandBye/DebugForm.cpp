@@ -73,15 +73,14 @@ void DebugForm::OnTick(System::Object ^, System::EventArgs ^)
 void DebugForm::RefreshUISlow()
 {
 	//ListView Settings
-	for each(Setting* setting in settings_prov->getAllSettings()) {
-		String^ name = gcnew String(setting->GetNameAsString().c_str());
-		string std_value;
+	for each(Setting^ setting in settings_prov->getAllSettings()) {
+		String^ name = setting->GetNameAsString();
+		String^ value;
 
 		//Adds all values to an single String^
-		for each(string single_value in setting->GetValue()) {
-			std_value += single_value;
+		for each(String^ single_value in setting->GetValue()) {
+			value += single_value;
 		}
-		String^ value = gcnew String(std_value.c_str());
 
 		listViewSettings->Items->Add(name)->SubItems->Add(value);
 	}

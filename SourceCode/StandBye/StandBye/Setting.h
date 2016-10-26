@@ -27,9 +27,9 @@ private:
 	SettingName name;
 
 public:
-	Setting(string name, vector<string> values);
-	Setting(SettingName name, vector<string> values);
-	Setting(SettingName name, string value);
+	Setting(String^ name, List<String^>^ values);
+	Setting(SettingName name, List<String^>^ values);
+	Setting(SettingName name, String^ value);
 	SettingName GetName();
 	~Setting() {
 		NAME_STRINGS->Clear();
@@ -37,15 +37,15 @@ public:
 		value->Clear();
 		value->TrimExcess();
 	}
-	vector<string> GetValue();
-	void ChangeValue(vector<string> values_changed);
-	void ChangeValue(string value_changed);
-	void AddValue(string value_new);
-	void RemoveValue(string value_remove);
-	bool Contains(const string value_find);
-	string GetNameAsString();
+	List<String^>^ GetValue();
+	void ChangeValue(List<String^>^ values_changed);
+	void ChangeValue(String^ value_changed);
+	void AddValue(String^ value_new);
+	void RemoveValue(String^ value_remove);
+	bool Contains(String^ value_find);
+	String^ GetNameAsString();
 
 private:
-	string ConvertSettingNameToString(SettingName n);
-	SettingName ConvertStringToSettingName(string name);
+	String^ ConvertSettingNameToString(SettingName n);
+	SettingName ConvertStringToSettingName(String^ name);
 };

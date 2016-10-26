@@ -11,16 +11,15 @@
 #include "stdafx.h"
 #include "Setting.h"
 
-using std::vector;
-using std::string;
+using namespace System;
 
-string Setting::ConvertSettingNameToString(SettingName settingname) {
-	return NAME_STRINGS.at(static_cast<int>(settingname));
+String^ Setting::ConvertSettingNameToString(SettingName settingname) {
+	return (String^)(NAME_STRINGS[(int)settingname]);
 };
 
-SettingName Setting::ConvertStringToSettingName(string string_name) {
+SettingName Setting::ConvertStringToSettingName(String^ string_name) {
 	int counter = 0;
-	for each(string s in NAME_STRINGS) {
+	for each(String^ s in NAME_STRINGS) {
 		if (s == string_name) {
 			SettingName n = static_cast<SettingName>(counter);
 			return n;
@@ -29,52 +28,54 @@ SettingName Setting::ConvertStringToSettingName(string string_name) {
 	}
 	//The name was not valid
 	LOG("No valid name entered!");
-	throw("Failed to convert string to SettingName. No valid string entered!");
+	throw("Failed to convert String^ to SettingName. No valid String^ entered!");
 }
 
-Setting::Setting(string name, vector<string> value) {
+Setting::Setting(String^ name, List<String^>^ value) {
 	this->name = Setting::ConvertStringToSettingName(name);
 	this->value = value;
 }
 
-Setting::Setting(SettingName name, vector<string> value) {
+Setting::Setting(SettingName name, List<String^>^ value) {
 	this->name = name;
 	this->value = value;
 }
 
-Setting::Setting(SettingName name, string value) {
+Setting::Setting(SettingName name, String^ value) {
 	this->name = name;
-	this->value = vector<string>(1, value);
+	this->value = gcnew List<String^>();
+	this->value->Add(value);
 }
 
 SettingName Setting::GetName() {
 	return name;
 }
 
-vector<string> Setting::GetValue() {
+List<String^>^ Setting::GetValue() {
 	return value;
 }
 
-void Setting::ChangeValue(vector<string> value_changed) {
+void Setting::ChangeValue(List<String^>^ value_changed) {
 	value = value_changed;
 }
 
-void Setting::ChangeValue(string value_changed) {
-	value = vector<string>(1, value_changed);
+void Setting::ChangeValue(String^ value_changed) {
+	value = gcnew List<String^>(1);
+	value->Add(value_changed);
 }
 
-void Setting::AddValue(string value_new) {
-	value.push_back(value_new);
+void Setting::AddValue(String^ value_new) {
+	value->Add(value_new);
 }
 
-void Setting::RemoveValue(string value_remove) {
-	value.erase(std::remove(value.begin(), value.end(), value_remove), value.end());
+void Setting::RemoveValue(String^ value_remove) {
+	value->Remove(value_remove);
 }
 
-bool Setting::Contains(const string value_find) {
-	return std::find(value.begin(), value.end(), value_find) != value.end();
+bool Setting::Contains(String^ value_find) {
+	return value->Contains(value_find);
 }
 
-string Setting::GetNameAsString() {
+String^ Setting::GetNameAsString() {
 	return Setting::ConvertSettingNameToString(this->name);
 }

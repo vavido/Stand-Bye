@@ -42,10 +42,10 @@ public:
 	///</summary>
 	int getThreshold(SettingName name);
 
-	///<summary>Returns the value of a specified Setting as a std::string
+	///<summary>Returns the value of a specified Setting as a std::String^ 
 	///<para>use namespace <code> SettingName:: </code> to get the Names!</para>
 	///</summary>
-	std::string getRawSetting(SettingName name);
+	String^ getRawSetting(SettingName name);
 
 	///<summary>Return if selected Metric is active
 	///<para>use namespace <code> SettingName:: </code> to get the Names!</para>
@@ -64,18 +64,18 @@ public:
 	///<summary>Sets the value for a specified Setting</summary>
 	///<param name="value">The value</param>
 	///<param name="name">The name of the setting </param>
-	void setSetting(SettingName name, const string value);
+	void setSetting(SettingName name, String^  value);
 
 	///<summary>Returns the set List of blocked Processes</summary>
-	vector<string> getProcessList();
+	List<String^>^ getProcessList();
 
 	///<summary>Adds one Process to the blocked process list</summary>
 	///<param name="process">path of the process</param>
-	bool addProcessToProcessList(const string process);
+	bool addProcessToProcessList(String^  process);
 
 	///<summary>Adds one Process to the blocked process list.</summary>
 	///<param name="process">path of the process</param>
-	void removeProcessFromProcessList(const string process);
+	void removeProcessFromProcessList(String^  process);
 
 	///<summary>Resets all settings to factory settings</summary>
 	bool checkSettingsFile();
@@ -84,7 +84,7 @@ public:
 	bool saveSettingsToFile();
 
 	///<summary>Returns all currently loaded settings</summary>
-	vector<Setting^> getAllSettings();
+	List<Setting^>^ getAllSettings();
 
 	///<summary>Returns if the settingsProvider had to correct the settingsfile, which means that this was the first launch of the application</summary>
 	bool isFirstStart();
@@ -99,5 +99,5 @@ private:
 
 	Setting^ getSettingbyName(SettingName name);
 
-	string getSettingsFilePath();
+	String^  getSettingsFilePath();
 };

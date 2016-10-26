@@ -13,46 +13,11 @@
 #include "BasicFunc.h"
 #include "SystemAccess.h" //To avoid cross linking
 
-std::string BasicFunc::StringToString(System::String^ str) {
-	msclr::interop::marshal_context context;
-	std::string fstr = context.marshal_as<std::string>(str);
-	return fstr;
-};
-
-std::vector<std::string> BasicFunc::SplitString(const std::string s, char delim) {
-	std::vector<std::string> elems;
-	std::stringstream ss(s);
-	std::string item;
-	while (std::getline(ss, item, delim)) {
-		elems.push_back(item);
-	}
-	return elems;
-}
-
-int BasicFunc::StringToInt(std::string str) {
-	std::stringstream stream(str);
-	int result;
-	stream >> result;
-	return result;
-}
-
 System::Drawing::Font^ BasicFunc::getMetroFont(float size) {
 	return gcnew System::Drawing::Font(L"Microsoft Sans Serif", size);
 }
 
-bool BasicFunc::VectorContains(std::vector<string> list, std::string text)
-{
-	bool result = false;
-	for each(std::string s in list) {
-		if (s == text) {
-			result = true;
-		}
-	}
-	return result;
-}
-
-System::String ^ BasicFunc::getLogFilePath()
-{
+System::String ^ BasicFunc::getLogFilePath() {
 	using namespace System::IO;
 	using namespace System::Diagnostics;
 
@@ -71,8 +36,7 @@ System::String ^ BasicFunc::getLogFilePath()
 	return file_path;
 }
 
-void BasicFunc::Log(System::String^ text)
-{
+void BasicFunc::Log(System::String^ text) {
 	using namespace System::IO;
 	using namespace System::Diagnostics;
 
@@ -86,8 +50,7 @@ void BasicFunc::Log(System::String^ text)
 	StreamWriter^ sw;
 	try {
 		sw = File::AppendText(BasicFunc::getLogFilePath());
-	}
-	catch (System::Exception^ e) {
+	} catch(System::Exception^ e) {
 		System::Diagnostics::Debug::WriteLine(e->Message);
 		System::Diagnostics::Debug::WriteLine(e->StackTrace);
 		return;
@@ -96,20 +59,18 @@ void BasicFunc::Log(System::String^ text)
 	//Appends Text
 	try {
 		sw->WriteLine(line);
-	}
-	catch (Exception^ e) {
+	} catch(Exception^ e) {
 		System::Diagnostics::Debug::WriteLine(e->Message);
 		System::Diagnostics::Debug::WriteLine(e->StackTrace);
 		return;
-	}
-	finally
+	} finally
 	{
-		if (sw)
+		if(sw)
 			delete (IDisposable^)sw;
 	}
 }
-void BasicFunc::Log(System::Exception ^ exception)
-{
+
+void BasicFunc::Log(System::Exception ^ exception) {
 	Log("Exception occurred!");
 	Log("-----------------------");
 	Log("\t" + "Message:");
@@ -119,21 +80,14 @@ void BasicFunc::Log(System::Exception ^ exception)
 	Log("-----------------------");
 }
 
-void BasicFunc::openLink(System::String^ url)
-{
+void BasicFunc::openLink(System::String^ url) {
 	System::Diagnostics::Process::Start(url);
 }
 
-void BasicFunc::cleanLogFiles()
-{
+void BasicFunc::cleanLogFiles() {
 	using namespace System::IO;
 
 	String^ mainFolder = SystemAccess::getStandByeFolderPath();
 	String^ log_folder = Path::Combine(mainFolder, "logs");
 	Directory::Delete(log_folder, true);
-}
-
-void BasicFunc::Log(std::string text)
-{
-	Log(gcnew String(text.c_str()));
 }

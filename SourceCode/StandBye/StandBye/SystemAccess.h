@@ -10,8 +10,6 @@
 //////////////////////////////////////////////////////////////////////////
 #pragma once
 #include "SettingsProvider.h"
-#include <string>
-#include <vector>
 #include <iostream>
 #include <Psapi.h> //To get Processes
 #include <stdio.h>//To get Processes
@@ -52,11 +50,11 @@ public:
 
 	static void StartESM(SettingsProvider^);
 
-	static std::vector<std::string> GetNetAdapterNames();
+	static List<std::string> GetNetAdapterNames();
 
 	static float GetLastInputTime();
 
-	static std::vector<std::string> GetRunningProccesses();
+	static List<std::string> GetRunningProccesses();
 
 	static void SetPresentationMode(boolean value);
 
