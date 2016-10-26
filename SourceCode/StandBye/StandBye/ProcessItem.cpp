@@ -12,8 +12,8 @@
 #include "ProcessItem.h"
 #include "SystemAccess.h"
 
-ProcessItem::ProcessItem(const string settings_value, Windows::Forms::ListView^ list) {
-	path = gcnew String(settings_value.c_str());
+ProcessItem::ProcessItem(String^ settings_value, Windows::Forms::ListView^ list) {
+	path = settings_value;
 	icon = SystemAccess::getIconOfProcess(settings_value);
 	addIconToLists(list);
 	this->Text = IO::Path::GetFileNameWithoutExtension(path);
@@ -21,7 +21,7 @@ ProcessItem::ProcessItem(const string settings_value, Windows::Forms::ListView^ 
 }
 
 void ProcessItem::Write(SettingsProvider^ settings_provider) {
-	settings_provider->addProcessToProcessList(BasicFunc::StringToString(path));
+	settings_provider->addProcessToProcessList(path);
 }
 
 ProcessItem::~ProcessItem() {

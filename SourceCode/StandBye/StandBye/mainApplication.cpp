@@ -378,7 +378,7 @@ mainApplication::mainApplication(HINSTANCE hInstance) {
 	LOG("Loaded settingsProvider");
 
 	//Defines language
-	String^ loadedLanguage = gcnew String(settings_provider->getRawSetting(SettingName::LANGUAGE).c_str());
+	String^ loadedLanguage = settings_provider->getRawSetting(SettingName::LANGUAGE);
 
 	//If language is not set, check if system language is supported
 	if (loadedLanguage == "system") {

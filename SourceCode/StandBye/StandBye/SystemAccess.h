@@ -50,7 +50,7 @@ public:
 
 	static void StartESM(SettingsProvider^);
 
-	static List<String^> GetNetAdapterNames();
+	static List<String^> ^GetNetAdapterNames();
 
 	static float GetLastInputTime();
 

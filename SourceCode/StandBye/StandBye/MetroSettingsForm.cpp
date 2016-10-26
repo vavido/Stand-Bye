@@ -244,9 +244,9 @@ System::Void MetroSettingsForm::metroButtonAddFromFile_Click(System::Object^, Sy
 	ofd->RestoreDirectory = true;
 	if (ofd->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 		if (ofd->CheckFileExists != false) {
-			if (settings_provider->addProcessToProcessList(BasicFunc::StringToString(ofd->FileName))) {
+			if (settings_provider->addProcessToProcessList(ofd->FileName)) {
 				//If item is not already existing...
-				listViewProc->Items->Add(gcnew ProcessItem(BasicFunc::StringToString(ofd->FileName), listViewProc));
+				listViewProc->Items->Add(gcnew ProcessItem(ofd->FileName, listViewProc));
 			}
 			else {
 				//The process has already been added
@@ -269,14 +269,14 @@ System::Void MetroSettingsForm::metroButtonAddFromList_Click(System::Object^, Sy
 					return;
 				}
 			}
-			listViewProc->Items->Add(gcnew ProcessItem(BasicFunc::StringToString(ProcForm->selectedProcessPath), listViewProc));
+			listViewProc->Items->Add(gcnew ProcessItem(ProcForm->selectedProcessPath, listViewProc));
 		}
 	}
 	delete ProcForm;
 }
 System::Void MetroSettingsForm::metroButtonRemove_Click(System::Object^, System::EventArgs^) {
 	ProcessItem^ proc = (ProcessItem^)listViewProc->SelectedItems[0];
-	settings_provider->removeProcessFromProcessList(BasicFunc::StringToString(proc->GetPath()));
+	settings_provider->removeProcessFromProcessList(proc->GetPath());
 	delete proc;
 	refreshIcons();
 }
@@ -335,10 +335,10 @@ void StandBye::MetroSettingsForm::writeSettings()
 	settings_provider->setActiveState(SettingName::SHOW_MESSAGES, metroToggleMessages->Checked);
 	settings_provider->setActiveState(SettingName::LOGGING, metroToggleLogging->Checked);
 	settings_provider->setActiveState(SettingName::USE_SLEEPTIME, metroToggleSleepTime->Checked);
-	settings_provider->setSetting(SettingName::SLEEPTIME, BasicFunc::StringToString(dateTimePickerStandbyStart->Value.ToString("HH:mm")));
+	settings_provider->setSetting(SettingName::SLEEPTIME,dateTimePickerStandbyStart->Value.ToString("HH:mm"));
 
 	//Sets language
-	settings_provider->setSetting(SettingName::LANGUAGE, BasicFunc::StringToString(CultureInfo::DefaultThreadCurrentCulture->TwoLetterISOLanguageName));
+	settings_provider->setSetting(SettingName::LANGUAGE, CultureInfo::DefaultThreadCurrentCulture->TwoLetterISOLanguageName);
 
 	//Sets processes
 	for each(ListViewItem^ l in listViewProc->Items) {
@@ -375,8 +375,8 @@ void StandBye::MetroSettingsForm::loadSettings()
 	metroToggleSOUND->Checked = settings_provider->isActive(SettingName::CHECK_SOUND);
 	metroToggleLogging->Checked = settings_provider->isActive(SettingName::LOGGING);
 	metroToggleSleepTime->Checked = settings_provider->isActive(SettingName::USE_SLEEPTIME);
-	dateTimePickerStandbyStart->Value = DateTime::ParseExact(gcnew String(settings_provider->getRawSetting(SettingName::SLEEPTIME).c_str()),
-		gcnew String("HH:mm"), CultureInfo::CreateSpecificCulture("de"));
+	dateTimePickerStandbyStart->Value = DateTime::ParseExact(settings_provider->getRawSetting(SettingName::SLEEPTIME),
+		"HH:mm", CultureInfo::CreateSpecificCulture("de"));
 
 	//Load AutoStart Setting
 	metroToggleAutoStart->Checked = SystemAccess::IsInAutoStart();

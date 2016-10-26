@@ -29,7 +29,7 @@ void SystemTimeMonitor::Stop()
 }
 void SystemTimeMonitor::OnTick(System::Object ^, System::EventArgs ^)
 {
-	standbyTime = DateTime::ParseExact(gcnew String(settings_provider->getRawSetting(SettingName::SLEEPTIME).c_str()),
+	standbyTime = DateTime::ParseExact(settings_provider->getRawSetting(SettingName::SLEEPTIME),
 		gcnew String("HH:mm"), CultureInfo::CreateSpecificCulture("de"));
 	if ((DateTime::Now.Hour == standbyTime.Hour) && (DateTime::Now.Minute == standbyTime.Minute)) {
 		monTimer->Stop();

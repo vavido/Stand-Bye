@@ -66,14 +66,14 @@ void InstanceMonitor::writeFile()
 {
 	String^ text = "Please ignore this file.";
 	File::WriteAllText(path, text);
-	LOG("Written TEMP File: " + BasicFunc::StringToString(path));
+	LOG("Written TEMP File: " + path);
 }
 
 void InstanceMonitor::deleteFile()
 {
 	if (File::Exists(path)) {
 		File::Delete(path);
-		LOG("Deleted TEMP file: " + BasicFunc::StringToString(path));
+		LOG("Deleted TEMP file: " + path);
 	}
 	else {
 		LOG("Deleted TMP File [not existed]");

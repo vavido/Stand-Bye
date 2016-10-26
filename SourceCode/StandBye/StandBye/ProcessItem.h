@@ -11,15 +11,16 @@
 #pragma once
 #include "stdafx.h"
 #include "SettingsProvider.h"
+
 using System::String;
 
 ref class ProcessItem : System::Windows::Forms::ListViewItem {
-	System::String^ path;
+	String^ path;
 	Bitmap^ icon;
 public:
 	~ProcessItem();
-	ProcessItem(const string settings_value, Windows::Forms::ListView^ list);
+	ProcessItem(String^ settings_value, System::Windows::Forms::ListView^ list);
 	void Write(SettingsProvider^ settings_provider);
 	String^ GetPath();
-	void addIconToLists(Windows::Forms::ListView^ list);
+	void addIconToLists(System::Windows::Forms::ListView^ list);
 };

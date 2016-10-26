@@ -18,6 +18,8 @@
 #define EXIT_ON_ERROR(hr) \
 if (FAILED(hr)){LOG("AUDIO LEVEL DETECTION FAILED"); return 0.0f;}
 
+using System::Runtime::InteropServices::Marshal;
+
 SystemAccess::SystemAccess(SettingsProvider^ p)
 {
 	LOG("Loading SystemAccess instance...");
@@ -78,7 +80,7 @@ void SystemAccess::reloadNetworkAdapters()
 {
 	perfNETs = gcnew List<PerformanceCounter^>;
 	for each(String^ name in SystemAccess::GetNetAdapterNames()) {
-		perfNETs->Add(gcnew PerformanceCounter("Network Interface", "Bytes Total/sec", gcnew String(name.c_str())));
+		perfNETs->Add(gcnew PerformanceCounter("Network Interface", "Bytes Total/sec", name));
 	}
 }
 
@@ -151,7 +153,7 @@ List<String^>^ SystemAccess::GetRunningProccesses() {
 					//Filters all System32 processes
 					if (!SPath->Contains("System32")) {
 						//Returns just the file name of the running process not the whole path
-						list.push_back(BasicFunc::StringToString(SPath));
+						list->Add(SPath);
 					}
 				}
 				::CloseHandle(hProcess);
@@ -461,8 +463,9 @@ String^ SystemAccess::getStandByeFolderPath()
 System::Drawing::Bitmap ^ SystemAccess::getIconOfProcess(String^ path)
 {
 	SHFILEINFOW* stFileInfo = new SHFILEINFOW();
-	std::wstring wpath = std::wstring(path.begin(), path.end());
-	LPCWSTR strPath = wpath.c_str();
+	
+	//Marshall managed path String^ to string in unmanaged memory
+	LPCWSTR strPath = (LPCWSTR) Marshal::StringToHGlobalAuto(path).ToPointer();
 
 	SHGetFileInfoW(strPath, FILE_ATTRIBUTE_NORMAL, stFileInfo, sizeof(stFileInfo), SHGFI_ICON | SHGFI_LARGEICON);
 	try {
@@ -477,7 +480,7 @@ System::Drawing::Bitmap ^ SystemAccess::getIconOfProcess(String^ path)
 
 bool SystemAccess::isPortable()
 {
-	String^ line = gcnew String(GetCommandLineW());
+	String^ line = Environment::CommandLine;
 	List<String^>^ commands = gcnew List<String^>(line->Split(' '));
 	for each(String^ c in commands) {
 		String^ cleaned = c->Trim()->Replace("-", "")->Replace("/", "");
@@ -490,7 +493,7 @@ bool SystemAccess::isPortable()
 
 bool SystemAccess::inDebugMode()
 {
-	String^ line = gcnew String(GetCommandLineW());
+	String^ line = Environment::CommandLine;
 	List<String^>^ commands = gcnew List<String^>(line->Split(' '));
 	for each(String^ c in commands) {
 		String^ cleaned = c->Trim()->Replace("-", "")->Replace("/", "");

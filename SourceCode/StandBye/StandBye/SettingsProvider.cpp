@@ -39,7 +39,7 @@ String^ SettingsProvider::getRawSetting(SettingName name) {
 
 int SettingsProvider::getThreshold(SettingName name) {
 	if(static_cast<int>(name) < 5) { //0 to 4 are threshold enumerators
-		return BasicFunc::StringToInt(SettingsProvider::getRawSetting(name));
+		return System::Convert::ToInt32(SettingsProvider::getRawSetting(name));
 	} else {
 		LOG("The number of the enumerator should be between 0 and 4");
 		throw("No Threshold with this name could be found!");
@@ -252,7 +252,7 @@ String^ SettingsProvider::getSettingsFilePath() {
 	//Adds the Path to the Settings file
 	String^ folder = Path::Combine(SystemAccess::getStandByeFolderPath(), "Settings.ini");
 	LOG("Retuned Settings-File-Path: " + folder);
-	return BasicFunc::StringToString(folder);
+	return folder;
 };
 
 Setting^ SettingsProvider::getSettingbyName(SettingName name) {
