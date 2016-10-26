@@ -12,7 +12,7 @@
 #include "SystemTimeMonitor.h"
 #include "mainApplication.h"
 
-SystemTimeMonitor::SystemTimeMonitor(mainApplication^ sender, SettingsProvider* setProv)
+SystemTimeMonitor::SystemTimeMonitor(mainApplication^ sender, SettingsProvider^ setProv)
 {
 	parent = sender;
 	settings_provider = setProv;

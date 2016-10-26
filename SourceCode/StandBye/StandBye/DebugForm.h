@@ -27,12 +27,12 @@ namespace StandBye {
 		//attributes
 		SystemMetricWatcher^ system_watcher;
 		InputMonitor^ input_monitor;
-		SettingsProvider* settings_prov;
+		SettingsProvider^ settings_prov;
 		mainApplication^ parent;
 		SystemAccess^ system_access;
 
 	public:
-		DebugForm(mainApplication^ sender, SettingsProvider* set_prov, InputMonitor^ mon)
+		DebugForm(mainApplication^ sender, SettingsProvider^ set_prov, InputMonitor^ mon)
 		{
 			parent = sender;
 			settings_prov = set_prov;

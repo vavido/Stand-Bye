@@ -374,7 +374,7 @@ mainApplication::mainApplication(HINSTANCE hInstance) {
 	supportedLanguages->Add(CultureInfo::CreateSpecificCulture("en"));
 
 	//Loading SettingsProvider
-	settings_provider = new SettingsProvider();
+	settings_provider = gcnew SettingsProvider();
 	LOG("Loaded settingsProvider");
 
 	//Defines language

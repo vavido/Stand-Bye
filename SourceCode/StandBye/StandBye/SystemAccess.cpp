@@ -18,7 +18,7 @@
 #define EXIT_ON_ERROR(hr) \
 if (FAILED(hr)){LOG("AUDIO LEVEL DETECTION FAILED"); return 0.0f;}
 
-SystemAccess::SystemAccess(SettingsProvider* p)
+SystemAccess::SystemAccess(SettingsProvider^ p)
 {
 	LOG("Loading SystemAccess instance...");
 	setprov = p;
@@ -107,7 +107,7 @@ float SystemAccess::GetMetric(SystemMetric s) {
 	return 0.0f;
 }
 
-void SystemAccess::StartESM(SettingsProvider* p)
+void SystemAccess::StartESM(SettingsProvider^ p)
 {
 	LOG("ESM will start now");
 	/*

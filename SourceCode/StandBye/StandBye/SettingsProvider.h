@@ -11,7 +11,6 @@
 #pragma once
 #include "stdafx.h"
 #include "Setting.h"
-#include <string>
 #include <sstream>
 #include <algorithm> //To delete ' in strings
 #include <iostream>
@@ -29,11 +28,9 @@ using namespace System::ComponentModel;
 using namespace System::Collections;
 using namespace System::Windows::Forms;
 using namespace System::Drawing;
-using std::string;
-using std::vector;
 
-class SettingsProvider {
-	vector<Setting*> SettingsList;
+ref class SettingsProvider {
+	List<Setting^>^ SettingsList;
 	bool settingsFileCorrected = false;
 
 public:
@@ -87,7 +84,7 @@ public:
 	bool saveSettingsToFile();
 
 	///<summary>Returns all currently loaded settings</summary>
-	vector<Setting*> getAllSettings();
+	vector<Setting^> getAllSettings();
 
 	///<summary>Returns if the settingsProvider had to correct the settingsfile, which means that this was the first launch of the application</summary>
 	bool isFirstStart();
@@ -100,7 +97,7 @@ private:
 
 	bool reset();
 
-	Setting* getSettingbyName(SettingName name);
+	Setting^ getSettingbyName(SettingName name);
 
 	string getSettingsFilePath();
 };

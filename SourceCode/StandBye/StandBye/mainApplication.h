@@ -36,7 +36,7 @@ private:
 	MenuItem^ PresentationModeItem; //Has to be accessed
 	MetroSettingsForm^ settingsForm;
 	SystemMetricWatcher^ system_watcher;
-	SettingsProvider* settings_provider;
+	SettingsProvider^ settings_provider;
 	SystemAccess^ system_access;
 	InputMonitor^ input_monitor;
 	SystemTimeMonitor^ time_monitor;

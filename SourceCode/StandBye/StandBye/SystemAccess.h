@@ -32,7 +32,7 @@ private:
 	PerformanceCounter^ perfCPU;
 	PerformanceCounter^ perfHDD;
 	List<PerformanceCounter^>^ perfNETs;
-	SettingsProvider* setprov;
+	SettingsProvider^ setprov;
 
 	//Methods
 	float getCPUUsage();
@@ -43,14 +43,14 @@ private:
 	void reloadNetworkAdapters();
 
 public:
-	SystemAccess(SettingsProvider* p);
+	SystemAccess(SettingsProvider^ p);
 	~SystemAccess();
 
 	enum class  SystemMetric : char { CPU, RAM, NETWORK, HDD, SOUND };
 
 	float GetMetric(SystemMetric s);
 
-	static void StartESM(SettingsProvider*);
+	static void StartESM(SettingsProvider^);
 
 	static std::vector<std::string> GetNetAdapterNames();
 

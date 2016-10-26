@@ -14,7 +14,7 @@
 
 #define SECONDS_TO_MILLIS(x) x * 1000
 
-InputMonitor::InputMonitor(mainApplication^ parent, SettingsProvider* s) {
+InputMonitor::InputMonitor(mainApplication^ parent, SettingsProvider^ s) {
 	this->parent = parent;
 	settings_provider = s;
 	monTimer = gcnew System::Windows::Forms::Timer();

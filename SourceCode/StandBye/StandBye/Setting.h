@@ -10,20 +10,20 @@
 //////////////////////////////////////////////////////////////////////////
 #pragma once
 #include "stdafx.h"
-#include <string>
 #include <algorithm>
 
-using std::string;
-using std::vector;
+using System::String;
+using System::Collections::Generic::List;
 
 enum class SettingName {
 	MAX_CPU, MAX_HDD, MAX_NET, MAX_RAM, WAIT_TIME, PROC_EXCP, NET_ADAPT, LANGUAGE, STANDBY_MODE, SLEEPTIME, USE_CPU, USE_HDD, USE_NET, USE_RAM, CHECK_SOUND, SEARCH_UPDATES, SHOW_MESSAGES, LOGGING, USE_SLEEPTIME
 };
 
-class Setting {
+ref class Setting {
+
 private:
-	vector<string> NAME_STRINGS = { "MAX_CPU", "MAX_HDD", "MAX_NET", "MAX_RAM", "WAIT_TIME", "PROC_EXCP", "NET_ADAPT", "LANGUAGE", "STANDBY_MODE","SLEEPTIME", "USE_CPU", "USE_HDD", "USE_NET", "USE_RAM", "CHECK_SOUND", "SEARCH_UPDATES", "SHOW_MESSAGES", "LOGGING", "USE_SLEEPTIME" };
-	vector<string> value;
+	List<String^>^ NAME_STRINGS = gcnew List<String^>();
+	List<String^>^ value;
 	SettingName name;
 
 public:
@@ -31,12 +31,11 @@ public:
 	Setting(SettingName name, vector<string> values);
 	Setting(SettingName name, string value);
 	SettingName GetName();
-	~Setting()
-	{
-		NAME_STRINGS.clear();
-		NAME_STRINGS.shrink_to_fit();
-		value.clear();
-		value.shrink_to_fit();
+	~Setting() {
+		NAME_STRINGS->Clear();
+		NAME_STRINGS->TrimExcess();
+		value->Clear();
+		value->TrimExcess();
 	}
 	vector<string> GetValue();
 	void ChangeValue(vector<string> values_changed);

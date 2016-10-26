@@ -22,10 +22,10 @@ private:
 	System::DateTime wakeTime;
 	mainApplication^ parent;
 	System::Windows::Forms::Timer^ monTimer;
-	SettingsProvider* settings_provider;
+	SettingsProvider^ settings_provider;
 
 public:
-	InputMonitor(mainApplication^ parent, SettingsProvider* s);
+	InputMonitor(mainApplication^ parent, SettingsProvider^ s);
 	~InputMonitor();
 	void Stop();
 	void OnPowerModeChanged(Object^ sender, PowerModeChangedEventArgs^ e);

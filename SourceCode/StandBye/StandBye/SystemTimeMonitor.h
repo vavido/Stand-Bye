@@ -22,13 +22,13 @@ ref class SystemTimeMonitor
 {
 private:
 	mainApplication^ parent;
-	SettingsProvider* settings_provider;
+	SettingsProvider^ settings_provider;
 	System::Windows::Forms::Timer^ monTimer;
 	DateTime standbyTime;
 private:
 	void OnTick(System::Object ^sender, System::EventArgs ^e);
 public:
-	SystemTimeMonitor(mainApplication^ sender, SettingsProvider* setProv);
+	SystemTimeMonitor(mainApplication^ sender, SettingsProvider^ setProv);
 	~SystemTimeMonitor()
 	{
 		monTimer->Stop();

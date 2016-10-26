@@ -35,7 +35,7 @@ namespace StandBye {
 	private:
 		mainApplication^ parent;
 		SystemAccess^ system_access;
-		SettingsProvider* settings_provider;
+		SettingsProvider^ settings_provider;
 		SystemMetricWatcher^ system_watcher;
 		ResourceManager^ res_man;
 		ResourceManager^ res_manIMG;
@@ -53,7 +53,7 @@ namespace StandBye {
 	private: MetroFramework::Controls::MetroLabel^  explStartStandbyAt;
 
 	public:
-		MetroSettingsForm(mainApplication^ parent, SettingsProvider* pro, List<CultureInfo^>^ supportLanguages)
+		MetroSettingsForm(mainApplication^ parent, SettingsProvider^ pro, List<CultureInfo^>^ supportLanguages)
 		{
 			//Sets global variables
 			this->parent = parent;
