@@ -31,7 +31,7 @@ using System::Windows::Forms::Application;
 
 public ref class mainApplication {
 private:
-	HINSTANCE hinstance;
+	
 	NotifyIcon^ trayicon;
 	MenuItem^ PresentationModeItem; //Has to be accessed
 	MetroSettingsForm^ settingsForm;
@@ -50,8 +50,8 @@ private:
 	bool ask_Enable_PresentationMode = true;
 
 public:
-	//Main Functions
-	mainApplication(HINSTANCE hInstance);
+	
+	mainApplication();
 
 	~mainApplication() {
 		//Cleans Resources
@@ -101,7 +101,7 @@ public:
 	void StopSystemTimeWatcher();
 
 	//Context Menu public
-	NotifyIcon^ GenerateIcon(HINSTANCE hInstance);
+	NotifyIcon^ GenerateIcon();
 	void Quit(Object^, System::EventArgs^);
 	void ReloadContextMenu();
 	void OpenSettingsForm();

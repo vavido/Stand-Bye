@@ -12,7 +12,7 @@
 #include "mainApplication.h"
 
 [STAThread] //Because of FileDialog --> Application is single threaded - Windows needs that
-int __clrcall wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int) {
+int main() {
 	//Application
 	mainApplication^ standbye;
 	InstanceMonitor^ instance_monitor;
@@ -23,7 +23,7 @@ int __clrcall wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR,
 	while (errors_occured < 3) {
 		//Creates application
 		try {
-			standbye = gcnew mainApplication(hInstance);
+			standbye = gcnew mainApplication();
 
 			instance_monitor = gcnew InstanceMonitor(standbye);
 			//If another instance is running --> exit

@@ -18,8 +18,8 @@
 
 using namespace StandBye;
 
-NotifyIconAppContext::NotifyIconAppContext(mainApplication^ app, HINSTANCE hinst) {
-	app->GenerateIcon(hinst);
+NotifyIconAppContext::NotifyIconAppContext(mainApplication^ app) {
+	app->GenerateIcon();
 }
 
 void mainApplication::OpenSettings(Object^, System::EventArgs^) {
@@ -296,7 +296,7 @@ ContextMenu^ mainApplication::GetContextMenu() {
 
 void mainApplication::Start()
 {
-	ApplicationContext^ context = gcnew NotifyIconAppContext(this, hinstance);
+	ApplicationContext^ context = gcnew NotifyIconAppContext(this);
 	Application::ApplicationExit += gcnew System::EventHandler(this, &mainApplication::Quit);
 	Application::Run(context); //Synchronous
 	LOG("!!Application exited");
@@ -364,9 +364,9 @@ void mainApplication::checkSystemAndStandby(bool checkThresholds)
 	}
 }
 
-mainApplication::mainApplication(HINSTANCE hInstance) {
+mainApplication::mainApplication() {
 	LOG("Stand-Bye is starting!");
-	this->hinstance = hInstance;
+
 
 	//Loads Languages
 	supportedLanguages = gcnew List<CultureInfo^>();
