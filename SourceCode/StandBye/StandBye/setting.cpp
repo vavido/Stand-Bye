@@ -14,13 +14,13 @@
 using namespace System;
 
 String^ Setting::ConvertSettingNameToString(SettingName settingname) {
-	return (String^)(NAME_STRINGS[(int)settingname]);
+	return (NAME_STRINGS[(int)settingname]);
 };
 
 SettingName Setting::ConvertStringToSettingName(String^ string_name) {
 	int counter = 0;
 	for each(String^ s in NAME_STRINGS) {
-		if (s == string_name) {
+		if(s == string_name) {
 			SettingName n = static_cast<SettingName>(counter);
 			return n;
 		}
@@ -31,21 +31,31 @@ SettingName Setting::ConvertStringToSettingName(String^ string_name) {
 	throw("Failed to convert String^ to SettingName. No valid String^ entered!");
 }
 
+void Setting::InitNames() {
+	this->NAME_STRINGS = gcnew array<String^>{"MAX_CPU", "MAX_HDD", "MAX_NET", "MAX_RAM", "WAIT_TIME", "PROC_EXCP",
+		"NET_ADAPT", "LANGUAGE", "STANDBY_MODE", "SLEEPTIME", "USE_CPU", "USE_HDD", "USE_NET", "USE_RAM", "CHECK_SOUND",
+		"SEARCH_UPDATES", "SHOW_MESSAGES", "LOGGING", "USE_SLEEPTIME"};
+}
+
 Setting::Setting(String^ name, List<String^>^ value) {
+	this->InitNames();
 	this->name = Setting::ConvertStringToSettingName(name);
 	this->value = value;
 }
 
 Setting::Setting(SettingName name, List<String^>^ value) {
+	this->InitNames();
 	this->name = name;
 	this->value = value;
 }
 
 Setting::Setting(SettingName name, String^ value) {
+	this->InitNames();
 	this->name = name;
 	this->value = gcnew List<String^>();
 	this->value->Add(value);
 }
+
 
 SettingName Setting::GetName() {
 	return name;

@@ -104,7 +104,8 @@
       <TargetMachine>NotSet</TargetMachine>
       <CLRImageType>ForcePureILImage</CLRImageType>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -121,7 +122,8 @@
       <TargetMachine>NotSet</TargetMachine>
       <CLRImageType>ForcePureILImage</CLRImageType>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,7 +154,8 @@
       <TargetMachine>NotSet</TargetMachine>
       <CLRImageType>ForcePureILImage</CLRImageType>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -169,7 +172,8 @@
       <TargetMachine>NotSet</TargetMachine>
       <CLRImageType>ForcePureILImage</CLRImageType>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

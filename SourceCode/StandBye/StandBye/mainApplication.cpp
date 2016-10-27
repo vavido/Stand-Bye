@@ -344,10 +344,22 @@ void mainApplication::StopSystemTimeWatcher()
 	}
 }
 
-NotifyIcon^ mainApplication::GenerateIcon(HINSTANCE hInstance) {
+NotifyIcon^ mainApplication::GenerateIcon() {
+	
 	using namespace System::Windows::Forms;
+	using namespace System::Reflection;
+
 	trayicon = gcnew NotifyIcon();
-	trayicon->Icon = System::Drawing::Icon::FromHandle((IntPtr)LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)));
+
+	// Grab the assembly this is being called from
+	Assembly^ assembly = Assembly::GetExecutingAssembly();
+	AssemblyName^ assemblyName = assembly->GetName();
+
+	// Grab the images from the assembly
+	ResourceManager^ rm = gcnew ResourceManager(assemblyName->Name + ".ImageResources.Data", assembly);
+	Icon^ i = (Icon^)rm->GetObject("icon1.ico");
+
+	trayicon->Icon = i;
 	trayicon->Text = "Stand-Bye!";
 	trayicon->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &mainApplication::OnIconMouseClick);
 	trayicon->BalloonTipClicked += gcnew System::EventHandler(this, &mainApplication::OnIconBalloonTipClicked);

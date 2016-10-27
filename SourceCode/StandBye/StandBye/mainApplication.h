@@ -135,5 +135,5 @@ private:
 
 ref class NotifyIconAppContext : System::Windows::Forms::ApplicationContext {
 public:
-	NotifyIconAppContext(mainApplication^ app, HINSTANCE hinst);
+	NotifyIconAppContext(mainApplication^ app);
 };

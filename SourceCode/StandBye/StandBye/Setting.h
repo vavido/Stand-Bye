@@ -15,15 +15,15 @@
 using System::String;
 using System::Collections::Generic::List;
 
-enum class SettingName {
+public enum class SettingName : int {
 	MAX_CPU, MAX_HDD, MAX_NET, MAX_RAM, WAIT_TIME, PROC_EXCP, NET_ADAPT, LANGUAGE, STANDBY_MODE, SLEEPTIME, USE_CPU, USE_HDD, USE_NET, USE_RAM, CHECK_SOUND, SEARCH_UPDATES, SHOW_MESSAGES, LOGGING, USE_SLEEPTIME
 };
 
 ref class Setting {
 
 private:
-	List<String^>^ NAME_STRINGS = gcnew List<String^>();
-	List<String^>^ value;
+	array<String^> ^NAME_STRINGS;
+	List<String^>^ value = gcnew List<String^>();
 	SettingName name;
 
 public:
@@ -32,8 +32,6 @@ public:
 	Setting(SettingName name, String^ value);
 	SettingName GetName();
 	~Setting() {
-		NAME_STRINGS->Clear();
-		NAME_STRINGS->TrimExcess();
 		value->Clear();
 		value->TrimExcess();
 	}
@@ -48,4 +46,5 @@ public:
 private:
 	String^ ConvertSettingNameToString(SettingName n);
 	SettingName ConvertStringToSettingName(String^ name);
+	void InitNames();
 };

@@ -95,7 +95,9 @@ bool SettingsProvider::checkSettingsFile() {
 	//Resets to DEFAULT values
 
 	using namespace System::Collections;
-	List<Setting^>^ default_list;
+
+	List<Setting^>^ default_list = gcnew List<Setting^>();
+
 	default_list->Add(gcnew Setting(SettingName::WAIT_TIME, WAIT_TIME_DEFAULT));
 	default_list->Add(gcnew Setting(SettingName::LANGUAGE, "system"));
 	default_list->Add(gcnew Setting(SettingName::USE_CPU, "TRUE"));
@@ -143,49 +145,62 @@ bool SettingsProvider::checkSettingsFile() {
 bool SettingsProvider::saveSettingsToFile() {
 	return writeSettingsFile();
 };
+
 List<Setting^>^ SettingsProvider::getAllSettings() {
 	return SettingsList;
 }
+
 bool SettingsProvider::isFirstStart() {
 	return settingsFileCorrected;
 }
-;
+
 
 bool SettingsProvider::writeSettingsFile() {
 
-	StreamWriter^ writer = gcnew StreamWriter(getSettingsFilePath());
+	StreamWriter^ writer;
+	try {
+		StreamWriter^ writer = gcnew StreamWriter(getSettingsFilePath());
 
 
-	for each (Setting^ set in SettingsList) {
-		String^ all_values = "";
+		for each (Setting^ set in SettingsList) {
+			String^ all_values = "";
 
-		for each(String^ val in set->GetValue()) {
-			all_values = all_values + "'" + val + "'" + ",";
+			for each(String^ val in set->GetValue()) {
+				all_values = all_values + "'" + val + "'" + ",";
+			}
+			all_values = all_values->Substring(0, all_values->Length - 1);
+
+			//If Setting has no value
+			if(all_values == "") {
+				all_values = "''";
+			}
+			LOG("Written Setting ['" + set->GetNameAsString() + "'] with value [" + all_values + "]");
+
+			writer->WriteLine(set->GetNameAsString() + "=" + all_values);
 		}
-		all_values = all_values->Substring(0, all_values->Length - 1);
 
-		//If Setting has no value
-		if(all_values == "") {
-			all_values = "''";
+		return true;
+
+	} catch(Exception ^e) {
+
+		LOG("SettingsFile could not be opened to write Settings!");
+		LOG(e);
+
+		return false;
+
+	} finally{
+		if(writer != nullptr) {
+			writer->Close();
 		}
-		LOG("Written Setting ['" + set->GetNameAsString() + "'] with value [" + all_values + "]");
-
-		writer->WriteLine(set->GetNameAsString() + "=" + all_values);
 	}
-	writer->Close();
-	return true;
-//SettingsFile could not be opened!
-//	LOG("SettingsFile could not be opened to write Settings!");
-//	throw("SettingsFile could not be opened to write Settings!");
-//	return false;
 
 };
 
 bool SettingsProvider::loadSettings() {
 
-	String^ line, ^name, ^raw_values;
-	char gsf = "'"[0];
-	SettingsList->Clear();
+	String ^line, ^name, ^raw_values;
+	String ^gsf = "'";
+	SettingsList = gcnew List<Setting^>();
 
 	try {
 		StreamReader^ din = File::OpenText(getSettingsFilePath());
@@ -205,17 +220,18 @@ bool SettingsProvider::loadSettings() {
 			}
 
 			//Deletes "'"
-			raw_values->Remove(gsf);
+			raw_values->Replace(gsf, "");
 
 			array<String^> ^value = raw_values->Split(',');
 
 			// Creates new Setting
 			SettingsList->Add(gcnew Setting(name, gcnew List<String^>(value)));
 			LOG("Loaded Setting ['" + name + "'] with value ['" + raw_values + "']");
-
-			return true;
-
 		}
+
+		din->Close();
+		return true;
+
 	} catch(Exception^ e) {
 
 		LOG("SettingsFile could not be opened: ");
@@ -245,8 +261,8 @@ bool SettingsProvider::reset() {
 	SettingsList->Add(gcnew Setting(SettingName::SEARCH_UPDATES, "TRUE"));
 	SettingsList->Add(gcnew Setting(SettingName::SHOW_MESSAGES, "TRUE"));
 	return writeSettingsFile();
-}
-;
+};
+
 
 String^ SettingsProvider::getSettingsFilePath() {
 	//Adds the Path to the Settings file

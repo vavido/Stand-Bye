@@ -43,13 +43,16 @@ int main() {
 			errors_occured++;
 		}
 
-		if (standbye->hasUserExited()) {
-			//Application should not restart if user ends it
-			break;
+		if(standbye != nullptr) {
+			if(standbye->hasUserExited()) {
+				//Application should not restart if user ends it
+				break;
+			}
+			else {
+				errors_occured++;
+			}
 		}
-		else {
-			errors_occured++;
-		}
+	
 	}
 	delete instance_monitor;
 	delete standbye;
