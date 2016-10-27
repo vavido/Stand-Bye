@@ -137,9 +137,6 @@
     <ClInclude Include="mainApplication.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="winMain.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="HotKeyMessageFilter.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>

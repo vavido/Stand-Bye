@@ -298,6 +298,7 @@ void mainApplication::Start()
 {
 	ApplicationContext^ context = gcnew NotifyIconAppContext(this);
 	Application::ApplicationExit += gcnew System::EventHandler(this, &mainApplication::Quit);
+	Application::EnableVisualStyles();
 	Application::Run(context); //Synchronous
 	LOG("!!Application exited");
 }

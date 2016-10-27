@@ -212,7 +212,6 @@
     <ClInclude Include="Updater.h">
       <FileType>CppForm</FileType>
     </ClInclude>
-    <ClInclude Include="winMain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
