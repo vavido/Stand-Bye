@@ -19,6 +19,7 @@
 
 using namespace System::Diagnostics;
 using namespace System::Collections::Generic;
+using System::Runtime::InteropServices::DllImportAttribute;
 using System::Windows::Forms::Timer;
 using System::Windows::Forms::Application;
 using System::Windows::Forms::PowerState;
@@ -85,4 +86,7 @@ public:
 	static bool isPortable();
 
 	static bool inDebugMode();
+
+	[DllImport("user32.dll")]
+	static bool GetLastInputInfo(LASTINPUTINFO* plii);
 };

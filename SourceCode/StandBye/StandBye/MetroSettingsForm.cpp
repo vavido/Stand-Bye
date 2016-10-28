@@ -265,7 +265,7 @@ System::Void MetroSettingsForm::metroButtonAddFromList_Click(System::Object^, Sy
 			for each(ListViewItem^ item in listViewProc->Items) {
 				ProcessItem^ p = (ProcessItem^)item;
 				if (p->GetPath() == ProcForm->selectedProcessPath) {
-					MessageBoxA(NULL, "Process has already been added!", "Error!", MB_OK);
+					MessageBox::Show(nullptr, "Process has already been added!", "Error!");
 					return;
 				}
 			}
@@ -356,7 +356,7 @@ void StandBye::MetroSettingsForm::writeSettings()
 
 	//Writes settings to file
 	if (!settings_provider->saveSettingsToFile()) {
-		MessageBoxA(NULL, "Writing Settings not successful!", "Writing not successful!", MB_OK);
+		MessageBox::Show(nullptr, "Writing Settings not successful!", "Writing not successful!");
 	}
 }
 void StandBye::MetroSettingsForm::loadSettings()
@@ -429,7 +429,7 @@ System::Void MetroSettingsForm::ReformatTextBoxValueOnReturn(System::Object ^sen
 		if (value == -1) {
 			//Could not convert
 			txt->Text = "0.0";
-			MessageBoxA(NULL, "Please insert numbers from 0 - 9", "Error!", MB_OK);
+			MessageBox::Show(nullptr, "Please insert numbers from 0 - 9", "Error!");
 		}
 		else {
 			txt->Text = FormatDigits(value);

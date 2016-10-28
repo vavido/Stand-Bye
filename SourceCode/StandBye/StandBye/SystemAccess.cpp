@@ -133,35 +133,26 @@ void SystemAccess::StartESM(SettingsProvider^ p)
 }
 
 List<String^>^ SystemAccess::GetRunningProccesses() {
-	List<String^> ^list;
-	const size_t maxPids = 1024;
+	List<String^> ^list = gcnew List<String^>();
+	array<Process^>^localAll = Process::GetProcesses();
 
-	DWORD pids[maxPids] = {};
-	DWORD bytesReturned = 0;
-	if (::EnumProcesses(pids, sizeof pids, &bytesReturned))
-	{
-		DWORD cProcesses = bytesReturned / sizeof *pids;
-		for (DWORD i = 0; i < cProcesses; i++)
-		{
-			DWORD pid = pids[i];
-			if (HANDLE hProcess = ::OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid))
-			{
-				WCHAR filename[MAX_PATH] = {};
-				if (::GetModuleFileNameEx(hProcess, NULL, (LPWSTR)filename, MAX_PATH)) {
-					std::wstring path = (std::wstring)(LPWSTR)filename;
-					String^ SPath = gcnew String(path.c_str());
-					//Filters all System32 processes
-					if (!SPath->Contains("System32")) {
-						//Returns just the file name of the running process not the whole path
-						list->Add(SPath);
-					}
-				}
-				::CloseHandle(hProcess);
+	String^ path;
+	for each(Process^ p in localAll) {
+		try {
+			path = p->MainModule->FileName;
+			if(!path->Contains("System32")) {
+				list->Add(path);
 			}
+
+		} catch(Exception^ e) {
 		}
 	}
+
 	return list;
+
 }
+
+
 
 void SystemAccess::SetPresentationMode(boolean state) {
 	if (state) {
@@ -271,10 +262,10 @@ List<String^>^ SystemAccess::getLoggedInUsers()
 	DWORD session_count = 0;
 	WTS_SESSION_INFOA *pSession = NULL;
 
-	//Enumerate through all sessions!
+	//Enumerate all sessions!
 	if (!WTSEnumerateSessionsA(WTS_CURRENT_SERVER_HANDLE, 0, 1, &pSession, &session_count))
 	{
-		LOG("Error on enumerating through sessions!");
+		LOG("Error when enumerating sessions!");
 		return loggedInUsers;
 	}
 
@@ -381,12 +372,7 @@ String ^ SystemAccess::getActiveUser()
 
 String ^ SystemAccess::getStartUserOfStandbye()
 {
-	String^ ThreadStartedUser;
-	//Gets the user name, who started the Thread
-	TCHAR name[UNLEN + 1];
-	DWORD size = UNLEN + 1;
-	GetUserName((TCHAR*)name, &size);
-	ThreadStartedUser = gcnew String(name);
+	String^ ThreadStartedUser = Environment::UserName;
 	LOG("The User: {" + ThreadStartedUser + "} started Standbye!");
 	return ThreadStartedUser;
 }
@@ -532,10 +518,11 @@ float SystemAccess::GetLastInputTime() {
 	lastInputInfo.cbSize = (UInt32)sizeof(lastInputInfo);
 	lastInputInfo.dwTime = 0;
 
-	if (GetLastInputInfo(&lastInputInfo))
+	if (SystemAccess::GetLastInputInfo(&lastInputInfo))
 	{
 		float lastInputTicks = (float)lastInputInfo.dwTime;
 		idleTicks = systemUptime - lastInputTicks;
 	}
 	return idleTicks;
+
 }
