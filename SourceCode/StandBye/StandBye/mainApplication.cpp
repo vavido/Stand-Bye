@@ -24,7 +24,7 @@ NotifyIconAppContext::NotifyIconAppContext(mainApplication^ app) {
 
 void mainApplication::OpenSettings(Object^, System::EventArgs^) {
 	LOG("Requested to load settingsForm");
-	if (settingsForm == nullptr) {
+	if(settingsForm == nullptr) {
 		StartBanner^ banner = gcnew StartBanner();
 		banner->Show();
 		banner->Activate();
@@ -38,14 +38,12 @@ void mainApplication::OpenSettings(Object^, System::EventArgs^) {
 		settingsForm = nullptr;
 		//Checks if settings were changed
 		//Loading SystemTime Monitor
-		if (settings_provider->isActive(SettingName::USE_SLEEPTIME)) {
+		if(settings_provider->isActive(SettingName::USE_SLEEPTIME)) {
 			this->StartSystemTimeWatcher();
-		}
-		else {
+		} else {
 			this->StopSystemTimeWatcher();
 		}
-	}
-	else {
+	} else {
 		//Settings form is open
 		LOG("Did not load Form: SettingsForm was visible");
 		settingsForm->BringToFront();
@@ -61,18 +59,16 @@ void mainApplication::Quit(Object^, System::EventArgs^) {
 	Application::ExitThread();
 }
 
-void mainApplication::ReloadContextMenu()
-{
+void mainApplication::ReloadContextMenu() {
 	trayicon->ContextMenu = GetContextMenu();
 	LOG("Reloaded Context Menu with Language:" + CultureInfo::DefaultThreadCurrentCulture->EnglishName);
 }
 
-void mainApplication::askUserAndStartStandby(bool FromSystemTime)
-{
+void mainApplication::askUserAndStartStandby(bool FromSystemTime) {
 	//Checks if the application is in presentation mode
-	if (inPresentationMode) {
+	if(inPresentationMode) {
 		LOG("Application in presentation mode! \n Canceled Sleep mode!");
-		if (FromSystemTime) {
+		if(FromSystemTime) {
 			String^ message = res_man->GetString("msg_canceled_of_presMode", CultureInfo::DefaultThreadCurrentCulture);
 			MessageWindow^ msgPres = gcnew MessageWindow(message, MessageBoxButtons::OK);
 			msgPres->ShowDialog();
@@ -83,17 +79,16 @@ void mainApplication::askUserAndStartStandby(bool FromSystemTime)
 	}
 
 	//Check if multiple users are logged in
-	if (SystemAccess::MultiUsersPreventStandby()) {
+	if(SystemAccess::MultiUsersPreventStandby()) {
 		return;
 	}
 
 	TimeoutWindow^ msgWnd = gcnew TimeoutWindow(this, 15);
 	LOG("Preparing the TimeoutWindow");
-	if (msgWnd->ShowDialog() == DialogResult::OK) {
+	if(msgWnd->ShowDialog() == DialogResult::OK) {
 		LOG("Going to Sleep mode!");
 		SystemAccess::StartESM(settings_provider);
-	}
-	else {
+	} else {
 		LOG("The User has canceled the MessageWindow!");
 
 		//Temporary Disabled
@@ -123,7 +118,7 @@ void mainApplication::askUserAndStartStandby(bool FromSystemTime)
 		*/
 
 		//Shows warning if started from system-time (= Standby at specified time)
-		if (FromSystemTime) {
+		if(FromSystemTime) {
 			String^ message = res_man->GetString("msg_standby_time_canceled", CultureInfo::DefaultThreadCurrentCulture);
 			MessageWindow^ msgPres = gcnew MessageWindow(message, MessageBoxButtons::OK);
 			msgPres->ShowDialog();
@@ -133,21 +128,18 @@ void mainApplication::askUserAndStartStandby(bool FromSystemTime)
 	}
 }
 
-bool mainApplication::hasUserExited()
-{
+bool mainApplication::hasUserExited() {
 	return userExited;
 }
 
-void mainApplication::SetPresentationMode(Object^, System::EventArgs ^)
-{
-	if (!inPresentationMode) {
+void mainApplication::SetPresentationMode(Object^, System::EventArgs ^) {
+	if(!inPresentationMode) {
 		SystemAccess::SetPresentationMode(true);
 		LOG("Presentation mode enabled");
 		PresentationModeItem->Checked = true;
 		ShowBallonTipMessage(res_man->GetString("msg_presMode_activated", CultureInfo::DefaultThreadCurrentCulture));
 		inPresentationMode = true;
-	}
-	else {
+	} else {
 		SystemAccess::SetPresentationMode(false);
 		LOG("Presentation mode disabled");
 		PresentationModeItem->Checked = false;
@@ -157,20 +149,18 @@ void mainApplication::SetPresentationMode(Object^, System::EventArgs ^)
 }
 
 bool mainApplication::isSystemBusy() {
-	if (system_watcher != nullptr) {
+	if(system_watcher != nullptr) {
 		return isSystemBusy(system_watcher);
-	}
-	else {
+	} else {
 		throw("SystemWatcher not initialized!");
 	}
 }
 
-bool mainApplication::isSystemBusy(SystemMetricWatcher^ watcher)
-{
+bool mainApplication::isSystemBusy(SystemMetricWatcher^ watcher) {
 	LOG("Checking System usage....");
 
 	//Checks if the application is in presentation mode
-	if (inPresentationMode) {
+	if(inPresentationMode) {
 		LOG("Application in presentation mode! \n Canceled Sleep mode!");
 		return true;
 	}
@@ -183,7 +173,7 @@ bool mainApplication::isSystemBusy(SystemMetricWatcher^ watcher)
 		for each(String^ running_process in SystemAccess::GetRunningProccesses()) {
 			String^ RunningProcessName = System::IO::Path::GetFileName(running_process);
 
-			if (ProcessName == RunningProcessName) {
+			if(ProcessName == RunningProcessName) {
 				//One Exception Process is running
 				exception_process_running = true;
 				break;
@@ -191,14 +181,14 @@ bool mainApplication::isSystemBusy(SystemMetricWatcher^ watcher)
 		}
 	}
 
-	if (exception_process_running) {
+	if(exception_process_running) {
 		LOG("An exception process is running! \n Canceled Sleep mode!");
 		return true;
 	}
 
 	//Check if sound is playing
-	if ((bool)active(CHECK_SOUND)) {
-		if (watcher->GetSystemMetric(SystemAccess::SystemMetric::SOUND) > 0.01) {
+	if((bool)active(CHECK_SOUND)) {
+		if(watcher->GetSystemMetric(SystemAccess::SystemMetric::SOUND) > 0.01) {
 			LOG("SOUND level too high - standby canceled");
 			return true;
 		}
@@ -206,29 +196,29 @@ bool mainApplication::isSystemBusy(SystemMetricWatcher^ watcher)
 
 	//Check Thresholds
 	//CPU
-	if ((bool)active(USE_CPU)) {
-		if (threshold(MAX_CPU) < watcher->GetSystemMetric(SystemAccess::SystemMetric::CPU)) {
+	if((bool)active(USE_CPU)) {
+		if(threshold(MAX_CPU) < watcher->GetSystemMetric(SystemAccess::SystemMetric::CPU)) {
 			LOG("CPU Usage too high - standby canceled");
 			return true;
 		}
 	}
 	//RAM
-	if ((bool)active(USE_RAM)) {
-		if (threshold(MAX_RAM) < watcher->GetSystemMetric(SystemAccess::SystemMetric::RAM)) {
+	if((bool)active(USE_RAM)) {
+		if(threshold(MAX_RAM) < watcher->GetSystemMetric(SystemAccess::SystemMetric::RAM)) {
 			LOG("RAM Usage too high - standby canceled");
 			return true;
 		}
 	}
 	//HDD
-	if ((bool)active(USE_HDD)) {
-		if (threshold(MAX_HDD) < watcher->GetSystemMetric(SystemAccess::SystemMetric::HDD)) {
+	if((bool)active(USE_HDD)) {
+		if(threshold(MAX_HDD) < watcher->GetSystemMetric(SystemAccess::SystemMetric::HDD)) {
 			LOG("HDD Usage too high - standby canceled");
 			return true;
 		}
 	}
 	//NET
-	if ((bool)active(USE_NET)) {
-		if (threshold(MAX_NET) < watcher->GetSystemMetric(SystemAccess::SystemMetric::NETWORK)) {
+	if((bool)active(USE_NET)) {
+		if(threshold(MAX_NET) < watcher->GetSystemMetric(SystemAccess::SystemMetric::NETWORK)) {
 			LOG("NETWORK Usage too high - standby canceled");
 			return true;
 		}
@@ -238,19 +228,16 @@ bool mainApplication::isSystemBusy(SystemMetricWatcher^ watcher)
 	return false;
 }
 
-void mainApplication::OpenSettingsForm()
-{
+void mainApplication::OpenSettingsForm() {
 	OpenSettings(nullptr, nullptr);
 }
 
-bool mainApplication::isInPresentationMode()
-{
+bool mainApplication::isInPresentationMode() {
 	return inPresentationMode;
 }
 
-void mainApplication::setPresentationMode(bool value)
-{
-	if (value != inPresentationMode) {
+void mainApplication::setPresentationMode(bool value) {
+	if(value != inPresentationMode) {
 		SetPresentationMode(nullptr, nullptr); //Changes the state
 	}
 }
@@ -294,8 +281,7 @@ ContextMenu^ mainApplication::GetContextMenu() {
 	return contextMenu;
 }
 
-void mainApplication::Start()
-{
+void mainApplication::Start() {
 	ApplicationContext^ context = gcnew NotifyIconAppContext(this);
 	Application::ApplicationExit += gcnew System::EventHandler(this, &mainApplication::Quit);
 	Application::EnableVisualStyles();
@@ -303,9 +289,8 @@ void mainApplication::Start()
 	LOG("!!Application exited");
 }
 
-void mainApplication::startMetricWatcher()
-{
-	if (system_watcher == nullptr) {
+void mainApplication::startMetricWatcher() {
+	if(system_watcher == nullptr) {
 		//Loading System Access
 		system_access = gcnew SystemAccess(settings_provider);
 		LOG("Loaded SystemAccess");
@@ -316,9 +301,8 @@ void mainApplication::startMetricWatcher()
 	}
 }
 
-void mainApplication::StopMetricWatcher()
-{
-	if (system_watcher != nullptr) {
+void mainApplication::StopMetricWatcher() {
+	if(system_watcher != nullptr) {
 		LOG("Stopped Metric Watcher");
 		delete system_access;
 		delete system_watcher;
@@ -327,17 +311,15 @@ void mainApplication::StopMetricWatcher()
 	}
 }
 
-void mainApplication::StartSystemTimeWatcher()
-{
-	if (time_monitor == nullptr) {
+void mainApplication::StartSystemTimeWatcher() {
+	if(time_monitor == nullptr) {
 		time_monitor = gcnew SystemTimeMonitor(this, settings_provider);
 		LOG("Loaded SystemtimeMonitor");
 	}
 }
 
-void mainApplication::StopSystemTimeWatcher()
-{
-	if (time_monitor != nullptr) {
+void mainApplication::StopSystemTimeWatcher() {
+	if(time_monitor != nullptr) {
 		time_monitor->Stop();
 		delete time_monitor;
 		time_monitor = nullptr;
@@ -346,7 +328,7 @@ void mainApplication::StopSystemTimeWatcher()
 }
 
 NotifyIcon^ mainApplication::GenerateIcon() {
-	
+
 	using namespace System::Windows::Forms;
 	using namespace System::Reflection;
 
@@ -357,8 +339,10 @@ NotifyIcon^ mainApplication::GenerateIcon() {
 	AssemblyName^ assemblyName = assembly->GetName();
 
 	// Grab the images from the assembly
-	ResourceManager^ rm = gcnew ResourceManager(assemblyName->Name + ".ImageResources.Data", assembly);
-	Icon^ i = (Icon^)rm->GetObject("icon1.ico");
+	ResourceManager^ rm = gcnew ResourceManager("StandBye.ImageResources.Data", assembly);
+	Bitmap ^bmp = (Bitmap^)rm->GetObject("ICON");
+
+	Icon^ i = Icon::FromHandle(bmp->GetHicon());
 
 	trayicon->Icon = i;
 	trayicon->Text = "Stand-Bye!";
@@ -370,9 +354,8 @@ NotifyIcon^ mainApplication::GenerateIcon() {
 	return trayicon;
 }
 
-void mainApplication::checkSystemAndStandby(bool checkThresholds)
-{
-	if (!checkThresholds || !this->isSystemBusy(system_watcher)) {
+void mainApplication::checkSystemAndStandby(bool checkThresholds) {
+	if(!checkThresholds || !this->isSystemBusy(system_watcher)) {
 		this->askUserAndStartStandby(!checkThresholds);
 	}
 }
@@ -394,15 +377,15 @@ mainApplication::mainApplication() {
 	String^ loadedLanguage = settings_provider->getRawSetting(SettingName::LANGUAGE);
 
 	//If language is not set, check if system language is supported
-	if (loadedLanguage == "system") {
+	if(loadedLanguage == "system") {
 		bool language_found = false;
 		for each(CultureInfo^ supLanguage in supportedLanguages) {
-			if (CultureInfo::CurrentUICulture->TwoLetterISOLanguageName == supLanguage->TwoLetterISOLanguageName) {
+			if(CultureInfo::CurrentUICulture->TwoLetterISOLanguageName == supLanguage->TwoLetterISOLanguageName) {
 				loadedLanguage = supLanguage->TwoLetterISOLanguageName;
 				language_found = true;
 			}
 		}
-		if (!language_found) {
+		if(!language_found) {
 			//loaded Language is not supported
 			loadedLanguage = "en";
 		}
@@ -417,7 +400,7 @@ mainApplication::mainApplication() {
 	LOG("Loaded InputMonitor");
 
 	//Loading SystemTime Monitor
-	if (settings_provider->isActive(SettingName::USE_SLEEPTIME)) {
+	if(settings_provider->isActive(SettingName::USE_SLEEPTIME)) {
 		this->StartSystemTimeWatcher();
 	}
 
@@ -433,51 +416,46 @@ mainApplication::mainApplication() {
 	SystemAccess::DisableWindowsStandBy();
 
 	//Loads Debug Form if requested
-	if (SystemAccess::inDebugMode()) {
+	if(SystemAccess::inDebugMode()) {
 		OpenDebugForm(nullptr, nullptr);
 	}
 }
 
-void mainApplication::OnIconMouseClick(System::Object ^, System::Windows::Forms::MouseEventArgs ^e)
-{
-	if (e->Button == Windows::Forms::MouseButtons::Left) {
+void mainApplication::OnIconMouseClick(System::Object ^, System::Windows::Forms::MouseEventArgs ^e) {
+	if(e->Button == Windows::Forms::MouseButtons::Left) {
 		//If left mouse click open settings
 		this->OpenSettings(nullptr, nullptr);
 	}
 }
 
-void mainApplication::OpenDebugForm(System::Object ^, System::EventArgs ^)
-{
+void mainApplication::OpenDebugForm(System::Object ^, System::EventArgs ^) {
 	LOG("Open DEBUG Form");
 	DebugForm^ debug_form = gcnew DebugForm(this, settings_provider, input_monitor);
 	debug_form->Show();
 }
 
-void mainApplication::CheckForUpdatesOnStartUp()
-{
+void mainApplication::CheckForUpdatesOnStartUp() {
 	//Updates are checked and if necessary installed
-	if (settings_provider->isActive(SettingName::SEARCH_UPDATES)) {
+	if(settings_provider->isActive(SettingName::SEARCH_UPDATES)) {
 		Updater^ updater = gcnew Updater();
-		if (updater->IsUpdateAvailable()) {
-			if (SystemAccess::isPortable()) {
+		if(updater->IsUpdateAvailable()) {
+			if(SystemAccess::isPortable()) {
 				//Portable Update
 				String^ message = res_man->GetString("msg_PortableUpdate", CultureInfo::DefaultThreadCurrentCulture);
 				MessageWindow^ msg = gcnew MessageWindow(message, MessageBoxButtons::YesNo);
 				//Asks to go to homepage
-				if (msg->ShowDialog() == DialogResult::OK) {
+				if(msg->ShowDialog() == DialogResult::OK) {
 					BasicFunc::openLink("www.stand-bye.de");
 				}
-			}
-			else {
+			} else {
 				//Standard Update
 				String^ message = res_man->GetString("ask_update", CultureInfo::DefaultThreadCurrentCulture);
 				MessageWindow^ msg = gcnew MessageWindow(message, MessageBoxButtons::YesNo);
-				if (msg->ShowDialog() == DialogResult::OK) {
+				if(msg->ShowDialog() == DialogResult::OK) {
 					updater->UpdateApplication(this);
 				}
 			}
-		}
-		else {
+		} else {
 			//Deletes File if it exists
 			updater->deleteInstallFile();
 		}
@@ -485,13 +463,11 @@ void mainApplication::CheckForUpdatesOnStartUp()
 	}
 }
 
-void mainApplication::CheckForUpdatesClicked(System::Object ^, System::EventArgs ^)
-{
+void mainApplication::CheckForUpdatesClicked(System::Object ^, System::EventArgs ^) {
 	Updater^ updater = gcnew Updater();
-	if (updater->IsUpdateAvailable()) {
+	if(updater->IsUpdateAvailable()) {
 		updater->UpdateApplication(this);
-	}
-	else {
+	} else {
 		String^ message = res_man->GetString("application_upToDate", CultureInfo::DefaultThreadCurrentCulture);
 		MessageWindow^ msg = gcnew MessageWindow(message, MessageBoxButtons::OK);
 		msg->ShowDialog();
@@ -499,14 +475,12 @@ void mainApplication::CheckForUpdatesClicked(System::Object ^, System::EventArgs
 	delete updater;
 }
 
-void mainApplication::OnIconBalloonTipClicked(System::Object ^, System::EventArgs ^)
-{
+void mainApplication::OnIconBalloonTipClicked(System::Object ^, System::EventArgs ^) {
 	this->OpenSettingsForm();
 }
 
-void mainApplication::ShowBallonTipMessage(System::String ^ text)
-{
-	if (settings_provider->isActive(SettingName::SHOW_MESSAGES)) {
+void mainApplication::ShowBallonTipMessage(System::String ^ text) {
+	if(settings_provider->isActive(SettingName::SHOW_MESSAGES)) {
 		trayicon->ShowBalloonTip(500, "Stand-Bye!", text, System::Windows::Forms::ToolTipIcon::Info);
 	}
 }
@@ -516,13 +490,12 @@ void mainApplication::registerPresentationModeHotkey() {
 	// MOD_ALT and MOD_CONTROL mean that alt and ctrl have to be pressed
 	// MOD_NOREPEAT avoids multiple messages from one keystroke
 	//0x50 is the virtual key code for the key P
-	if (RegisterHotKey(NULL, GlobalAddAtom((LPCWSTR)"stand-bye\0"), (MOD_ALT | MOD_CONTROL | MOD_NOREPEAT), 0x50)) {
+	if(RegisterHotKey(NULL, GlobalAddAtom((LPCWSTR)"stand-bye\0"), (MOD_ALT | MOD_CONTROL | MOD_NOREPEAT), 0x50)) {
 		LOG("Hotkey registered, adding MSG Filter");
 
 		//Generate a new Message filter, add it to the thread
 		Application::AddMessageFilter(gcnew HotKeyMessageFilter(this));
-	}
-	else {
+	} else {
 		LOG("Failed to register hotkey. Error: " + GetLastError());
 	}
 }
