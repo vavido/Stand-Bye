@@ -486,11 +486,16 @@ void mainApplication::ShowBallonTipMessage(System::String ^ text) {
 }
 
 void mainApplication::registerPresentationModeHotkey() {
+
+	String ^atomName = Thread::CurrentThread->ManagedThreadId.ToString("X8") + this->GetType()->FullName;
+	
+	short id = mainApplication::GlobalAddAtom(atomName);
+
 	//If the Hot key is successfully registered, add a message filter
 	// MOD_ALT and MOD_CONTROL mean that alt and ctrl have to be pressed
 	// MOD_NOREPEAT avoids multiple messages from one keystroke
 	//0x50 is the virtual key code for the key P
-	if(RegisterHotKey(NULL, GlobalAddAtom((LPCWSTR)"stand-bye\0"), (MOD_ALT | MOD_CONTROL | MOD_NOREPEAT), 0x50)) {
+	if(mainApplication::RegisterHotKey(IntPtr::Zero, id, (MOD_ALT | MOD_CONTROL | MOD_NOREPEAT), 0x50)) {
 		LOG("Hotkey registered, adding MSG Filter");
 
 		//Generate a new Message filter, add it to the thread

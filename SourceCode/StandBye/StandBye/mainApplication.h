@@ -28,6 +28,8 @@ using namespace StandBye;
 using System::Resources::ResourceManager;
 using System::Globalization::CultureInfo;
 using System::Windows::Forms::Application;
+using System::Runtime::InteropServices::DllImportAttribute; //for P/Invoke
+using System::Runtime::InteropServices::CharSet;
 
 public ref class mainApplication {
 private:
@@ -131,6 +133,14 @@ private:
 	//Updates
 	void CheckForUpdatesOnStartUp();
 	void CheckForUpdatesClicked(System::Object ^sender, System::EventArgs ^e);
+
+	//P/Invoke
+	[DllImport("user32.dll", SetLastError = true)]
+	static bool RegisterHotKey(IntPtr hwnd, int id, int fsModifiers, int vk);
+
+	[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet::Auto)]
+	static unsigned short GlobalAddAtom(String^ lpString);
+
 };
 
 ref class NotifyIconAppContext : System::Windows::Forms::ApplicationContext {
