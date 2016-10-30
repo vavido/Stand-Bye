@@ -237,6 +237,9 @@
     <ClCompile Include="winMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CSCore">
+      <HintPath>C:\Users\matth\Downloads\CSCore.dll</HintPath>
+    </Reference>
     <Reference Include="MetroFramework">
       <HintPath>..\Installer\DLLS\MetroFramework.dll</HintPath>
     </Reference>

@@ -10,9 +10,6 @@
 //////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 
-//Has to be here!
-#include <mmdeviceapi.h> // To get audio volume
-#include <endpointvolume.h> // To get audio volume
 #include "SystemAccess.h"
 
 #define EXIT_ON_ERROR(hr) \
@@ -229,29 +226,23 @@ bool SystemAccess::IsInAutoStart() {
 	}
 }
 
-float SystemAccess::getAudioPeak()
-{
-	//Requires Win Vista, <mmdeviceapi.h>, <endpointvolume.h> and ole32.lib, needs to be in method to convert MeterInformation to void**
-	float peak = 0;
-	HRESULT hr;
-	IMMDeviceEnumerator *pEnumerator = NULL;
-	IMMDevice *pDevice = NULL; //Get Audio Interface
-	IAudioMeterInformation *pMeterInfo = NULL;
-	hr = CoInitialize(NULL);
-	// Get enumerator for audio endpoint devices.
-	hr = CoCreateInstance(__uuidof(MMDeviceEnumerator),
-		NULL, CLSCTX_INPROC_SERVER,
-		__uuidof(IMMDeviceEnumerator),
-		(void**)&pEnumerator);
-	EXIT_ON_ERROR(hr);
-	hr = pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDevice);
-	EXIT_ON_ERROR(hr);
-	hr = pDevice->Activate(__uuidof(IAudioMeterInformation),
-		CLSCTX_ALL, NULL, (void**)&pMeterInfo);
-	EXIT_ON_ERROR(hr);
-	pMeterInfo->GetPeakValue(&peak); //Gets peak value
-	return peak;
+float SystemAccess::getAudioPeak(){
+
+	using CSCore::CoreAudioAPI::MMDeviceEnumerator;
+	using CSCore::CoreAudioAPI::DataFlow;
+	using CSCore::CoreAudioAPI::Role;
+	using CSCore::CoreAudioAPI::MMDevice;
+	using CSCore::CoreAudioAPI::AudioMeterInformation;
+
+	MMDeviceEnumerator ^enumerator = gcnew MMDeviceEnumerator();
+	MMDevice ^device = enumerator->GetDefaultAudioEndpoint(DataFlow::Render, Role::Multimedia);
+
+	AudioMeterInformation ^info = AudioMeterInformation::FromDevice(device);
+	
+	return info->PeakValue;
 }
+
+
 
 List<String^>^ SystemAccess::getLoggedInUsers()
 {
