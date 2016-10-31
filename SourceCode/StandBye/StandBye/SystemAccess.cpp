@@ -17,13 +17,12 @@ if (FAILED(hr)){LOG("AUDIO LEVEL DETECTION FAILED"); return 0.0f;}
 
 using System::Runtime::InteropServices::Marshal;
 
-SystemAccess::SystemAccess(SettingsProvider^ p)
-{
+SystemAccess::SystemAccess(SettingsProvider^ p) {
 	LOG("Loading SystemAccess instance...");
 	setprov = p;
 
 	//Enables autostart if first launch
-	if (setprov->isFirstStart() && SystemAccess::isPortable()) {
+	if(setprov->isFirstStart() && SystemAccess::isPortable()) {
 		this->SetAutoStart(true);
 		LOG("Enabled autostart on first launch of the application");
 	}
@@ -39,8 +38,7 @@ float SystemAccess::getCPUUsage() {
 	return cpuUsage_percent;
 }
 
-float SystemAccess::getRAMUsage()
-{
+float SystemAccess::getRAMUsage() {
 	MEMORYSTATUSEX memInfo;
 	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
 	GlobalMemoryStatusEx(&memInfo);
@@ -55,8 +53,7 @@ float SystemAccess::getNETUsage() {
 		for each(PerformanceCounter^ perf in *perfNETs) {
 			kbytes_per_sec += perf->NextValue() / 1000;
 		}
-	}
-	catch (Exception^ e) {
+	} catch(Exception^ e) {
 		LOG("Error getting NET Status");
 		LOG(e);
 		LOG("Reloading Network Adapters!");
@@ -67,14 +64,12 @@ float SystemAccess::getNETUsage() {
 	return kbytes_per_sec;
 }
 
-float SystemAccess::getHDDUsage()
-{
+float SystemAccess::getHDDUsage() {
 	float kbytes_per_sec = perfHDD->NextValue() / 1000;
 	return kbytes_per_sec;
 }
 
-void SystemAccess::reloadNetworkAdapters()
-{
+void SystemAccess::reloadNetworkAdapters() {
 	perfNETs = gcnew List<PerformanceCounter^>;
 	for each(String^ name in SystemAccess::GetNetAdapterNames()) {
 		perfNETs->Add(gcnew PerformanceCounter("Network Interface", "Bytes Total/sec", name));
@@ -91,7 +86,7 @@ SystemAccess::~SystemAccess() {
 }
 
 float SystemAccess::GetMetric(SystemMetric s) {
-	switch (s) {
+	switch(s) {
 	case SystemMetric::CPU:
 		return getCPUUsage();
 	case SystemMetric::RAM:
@@ -106,8 +101,7 @@ float SystemAccess::GetMetric(SystemMetric s) {
 	return 0.0f;
 }
 
-void SystemAccess::StartESM(SettingsProvider^ p)
-{
+void SystemAccess::StartESM(SettingsProvider^ p) {
 	LOG("ESM will start now");
 	/*
 	Different Power-save modes:
@@ -121,15 +115,15 @@ void SystemAccess::StartESM(SettingsProvider^ p)
 			Because standby does not save the memory state to disk, a power failure while in standby can cause loss of information.
 	*/
 
-	if (p->getRawSetting(SettingName::STANDBY_MODE) == "SUSPEND") {
+	if(p->getRawSetting(SettingName::STANDBY_MODE) == "SUSPEND") {
 		Application::SetSuspendState(PowerState::Suspend, false, false);
-	}
-	else {
+	} else {
 		Application::SetSuspendState(PowerState::Hibernate, false, false);
 	}
 }
 
 List<String^>^ SystemAccess::GetRunningProccesses() {
+
 	List<String^> ^list = gcnew List<String^>();
 	array<Process^>^localAll = Process::GetProcesses();
 
@@ -152,10 +146,9 @@ List<String^>^ SystemAccess::GetRunningProccesses() {
 
 
 void SystemAccess::SetPresentationMode(boolean state) {
-	if (state) {
+	if(state) {
 		SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED); //Application requires screen and system online
-	}
-	else {
+	} else {
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED); //reset the requirements
 	}
 }
@@ -166,30 +159,26 @@ void SystemAccess::SetAutoStart(boolean value) {
 	String^ path = "\"" + Application::ExecutablePath + "\"";
 	//LocalMaschine require administrator rights
 	rk = Registry::CurrentUser->OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-	if (value) {
+	if(value) {
 		rk->SetValue(APP_NAME, path);
 		LOG("The autostart has been set");
-	}
-	else {
+	} else {
 		rk->SetValue(APP_NAME, "");
 		LOG("The autostart has been disabled");
 	}
 }
 
-void SystemAccess::EnableWindowsStandBy()
-{
+void SystemAccess::EnableWindowsStandBy() {
 	SetThreadExecutionState(ES_CONTINUOUS);
 	LOG("Re-Enabled Windows Standby!");
 }
 
-void SystemAccess::DisableWindowsStandBy()
-{
+void SystemAccess::DisableWindowsStandBy() {
 	SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 	LOG("Disabled Windows Standby!");
 }
 
-bool SystemAccess::isUserActive()
-{
+bool SystemAccess::isUserActive() {
 	//DWORD ActiveSessionID = WTSGetActiveConsoleSessionId();
 	/*
 
@@ -216,17 +205,14 @@ bool SystemAccess::IsInAutoStart() {
 	rk = Registry::CurrentUser->OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 	System::Object^ o = nullptr;
 	o = rk->GetValue(APP_NAME, "");
-	if (o == nullptr || o->ToString()->Length == 0 || o->ToString() != path)
-	{
+	if(o == nullptr || o->ToString()->Length == 0 || o->ToString() != path) {
 		return false;
-	}
-	else
-	{
+	} else {
 		return true;
 	}
 }
 
-float SystemAccess::getAudioPeak(){
+float SystemAccess::getAudioPeak() {
 
 	using CSCore::CoreAudioAPI::MMDeviceEnumerator;
 	using CSCore::CoreAudioAPI::DataFlow;
@@ -238,56 +224,29 @@ float SystemAccess::getAudioPeak(){
 	MMDevice ^device = enumerator->GetDefaultAudioEndpoint(DataFlow::Render, Role::Multimedia);
 
 	AudioMeterInformation ^info = AudioMeterInformation::FromDevice(device);
-	
+
 	return info->PeakValue;
 }
 
 
 
-List<String^>^ SystemAccess::getLoggedInUsers()
-{
+List<String^>^ SystemAccess::getLoggedInUsers() {
 	List<String^>^ loggedInUsers = gcnew List<String^>();
 
-	//Gets list of logged in users
-	DWORD session_id;
-	DWORD session_count = 0;
-	WTS_SESSION_INFOA *pSession = NULL;
+	TerminalServicesManager ^tsmanager = gcnew TerminalServicesManager();
+	ITerminalServer ^server = tsmanager->GetLocalServer();
 
-	//Enumerate all sessions!
-	if (!WTSEnumerateSessionsA(WTS_CURRENT_SERVER_HANDLE, 0, 1, &pSession, &session_count))
-	{
-		LOG("Error when enumerating sessions!");
-		return loggedInUsers;
-	}
+	for each(ITerminalServicesSession^ session in server->GetSessions()) {
 
-	//Lists all users
-	for (unsigned int i = 0; i < session_count; i++)
-	{
-		session_id = pSession[i].SessionId;
-		// Get user name of this process
-		WCHAR* pUserName;
-		DWORD user_name_len = 0;
-
-		if (WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, session_id, WTSUserName, &pUserName, &user_name_len))
-		{
-			String^ username = gcnew String(pUserName);
-			if (username != "") {
-				//Got user name successfully!
-				loggedInUsers->Add(username);
-			}
+		String^ name = session->ClientName;
+		if(name != "") {
+			loggedInUsers->Add(name);
 		}
-		else {
-			LOG("Error on getting username for {" + gcnew String(pUserName) + "}");
-			continue;
-		}
-		//Free memory
-		if (pUserName) WTSFreeMemory(pUserName);
 	}
-	WTSFreeMemory(pSession);
 
 	LOG("Found total amount of {" + loggedInUsers->Count + "} Users:");
 	for each(String^ username in loggedInUsers) {
-		if (username != "") {
+		if(username != "") {
 			LOG("\t" + username);
 		}
 	}
@@ -295,81 +254,17 @@ List<String^>^ SystemAccess::getLoggedInUsers()
 	return loggedInUsers;
 }
 
-String ^ SystemAccess::getActiveUser()
-{
-	String^ activeUser = gcnew String("");
-
-	//Gets list of logged in users
-	DWORD session_id;
-	DWORD session_count = 0;
-	WTS_SESSION_INFO *pSession = NULL;
-
-	//Enumerate through all sessions!
-	if (!WTSEnumerateSessionsW(WTS_CURRENT_SERVER_HANDLE, 0, 1, &pSession, &session_count))
-	{
-		LOG("Error on enumerating through sessions!");
-		return "";
-	}
-
-	//Lists all users
-	for (unsigned int i = 0; i < session_count; i++)
-	{
-		session_id = pSession[i].SessionId;
-
-		WTS_CONNECTSTATE_CLASS wts_connect_state = WTSDisconnected;
-		WTS_CONNECTSTATE_CLASS* ptr_wts_connect_state = NULL;
-
-		// Get user name of this process
-		WCHAR* pUserName;
-		DWORD user_name_len = 0;
-
-		if (WTSQuerySessionInformationW(WTS_CURRENT_SERVER_HANDLE, session_id, WTSUserName, &pUserName, &user_name_len))
-		{
-			String^ username = gcnew String(pUserName);
-			if (username != "") {
-				//Got user name successfully!
-
-				DWORD bytes_returned = 0;
-				if (::WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, session_id, WTSConnectState, reinterpret_cast<LPTSTR*>(&ptr_wts_connect_state), &bytes_returned))
-				{
-					wts_connect_state = *ptr_wts_connect_state;
-					::WTSFreeMemory(ptr_wts_connect_state);
-					if (wts_connect_state == WTSActive) {
-						if (activeUser == "") {
-							activeUser = username;
-							LOG("The active user is: {" + activeUser + "}");
-						}
-						else {
-							//active User already set;
-							LOG("Found two or more active users!");
-							return username;
-						}
-					}
-				}
-				else {
-					LOG("Error on getting active state for {" + gcnew String(pUserName) + "}");
-					continue;
-				}
-			}
-		}
-
-		//Free memory
-		if (pUserName) WTSFreeMemory(pUserName);
-	}
-	WTSFreeMemory(pSession);
-
-	return activeUser;
+String ^ SystemAccess::getActiveUser() {
+	return Environment::UserName;
 }
 
-String ^ SystemAccess::getStartUserOfStandbye()
-{
+String ^ SystemAccess::getStartUserOfStandbye() {
 	String^ ThreadStartedUser = Environment::UserName;
 	LOG("The User: {" + ThreadStartedUser + "} started Standbye!");
 	return ThreadStartedUser;
 }
 
-bool SystemAccess::MultiUsersPreventStandby()
-{
+bool SystemAccess::MultiUsersPreventStandby() {
 	//Needs Wtsapi32.h
 	String^ ThreadStartedUser = getStartUserOfStandbye();
 	List<String^>^ loggedInUsers = getLoggedInUsers();
@@ -388,27 +283,24 @@ bool SystemAccess::MultiUsersPreventStandby()
 	*/
 	//////////////////////////////////////////////////////////////////////////
 
-	if (loggedInUsers->Count == 1) {
+	if(loggedInUsers->Count == 1) {
 		//Only one user is active! --> The standby can be activated
 		LOG("Only one user is active! StandBye can proceed!");
 		return false;
-	}
-	else if (currentActiveUser == ThreadStartedUser) {
+	} else if(currentActiveUser == ThreadStartedUser) {
 		//There are multiple users logged in, but the active user is the one, who started the process
 		LOG("There are multiple users active, but StandBye user is active!");
 		return false;
-	}
-	else {
+	} else {
 		//There are multiple users active and no one is active or an other one is active
 		LOG("There are multiple users logged in with a configuration that cancels standby");
 		return true;
 	}
 }
 
-String^ SystemAccess::getStandByeFolderPath()
-{
+String^ SystemAccess::getStandByeFolderPath() {
 	using namespace System::IO;
-	if (!SystemAccess::isPortable()) {
+	if(!SystemAccess::isPortable()) {
 		//Gets the AppData Path
 		String^ folder = Environment::GetFolderPath(Environment::SpecialFolder::ApplicationData);
 		System::IO::Directory::CreateDirectory(folder);
@@ -416,20 +308,16 @@ String^ SystemAccess::getStandByeFolderPath()
 		//Ensures that the folder exists
 
 		return folder;
-	}
-	else {
+	} else {
 		String^ folder = Directory::GetCurrentDirectory();
-		try
-		{
+		try {
 			// Attempt to get a list of security permissions from the folder.
 			// This will raise an exception if the path is read only or do not have access to view the permissions.
 			Directory::GetAccessControl(folder);
 
 			//is authorized
 			return folder;
-		}
-		catch (UnauthorizedAccessException^)
-		{
+		} catch(UnauthorizedAccessException^) {
 			//Not authorized
 			LOG("Not authorized to write to folder!");
 			return folder;
@@ -437,44 +325,34 @@ String^ SystemAccess::getStandByeFolderPath()
 	}
 }
 
-System::Drawing::Bitmap ^ SystemAccess::getIconOfProcess(String^ path)
-{
-	SHFILEINFOW* stFileInfo = new SHFILEINFOW();
-	
-	//Marshall managed path String^ to string in unmanaged memory
-	LPCWSTR strPath = (LPCWSTR) Marshal::StringToHGlobalAuto(path).ToPointer();
+System::Drawing::Bitmap ^ SystemAccess::getIconOfProcess(String^ path) {
 
-	SHGetFileInfoW(strPath, FILE_ATTRIBUTE_NORMAL, stFileInfo, sizeof(stFileInfo), SHGFI_ICON | SHGFI_LARGEICON);
-	try {
-		return Bitmap::FromHicon((IntPtr)stFileInfo->hIcon);
-	}
-	catch (System::ArgumentException^ e) {
-		LOG("Could not load icon from " + path);
-		LOG(e);
-		return nullptr;
-	}
+#undef ExtractAssociatedIcon;
+
+	Icon ^ic = Icon::ExtractAssociatedIcon(path);
+
+	return ic->ToBitmap();
+	
 }
 
-bool SystemAccess::isPortable()
-{
+bool SystemAccess::isPortable() {
 	String^ line = Environment::CommandLine;
 	List<String^>^ commands = gcnew List<String^>(line->Split(' '));
 	for each(String^ c in commands) {
 		String^ cleaned = c->Trim()->Replace("-", "")->Replace("/", "");
-		if (cleaned == "PORTABLE") {
+		if(cleaned == "PORTABLE") {
 			return true;
 		}
 	}
 	return false;
 }
 
-bool SystemAccess::inDebugMode()
-{
+bool SystemAccess::inDebugMode() {
 	String^ line = Environment::CommandLine;
 	List<String^>^ commands = gcnew List<String^>(line->Split(' '));
 	for each(String^ c in commands) {
 		String^ cleaned = c->Trim()->Replace("-", "")->Replace("/", "");
-		if (cleaned == "DEBUG") {
+		if(cleaned == "DEBUG") {
 			return true;
 		}
 	}
@@ -486,12 +364,9 @@ List<String^> ^SystemAccess::GetNetAdapterNames() {
 	List<String^> ^nics = gcnew List<String^>();
 	PerformanceCounterCategory^ category = gcnew PerformanceCounterCategory("Network Interface");
 	LOG("Get Network Adapter Names:");
-	if (category->GetInstanceNames() != __nullptr)
-	{
-		for each (System::String ^nic in category->GetInstanceNames())
-		{
-			if (!nic->Equals(filter))
-			{
+	if(category->GetInstanceNames() != __nullptr) {
+		for each (System::String ^nic in category->GetInstanceNames()) {
+			if(!nic->Equals(filter)) {
 				nics->Add(nic);
 				LOG("\t" + nic);
 			}
@@ -509,8 +384,7 @@ float SystemAccess::GetLastInputTime() {
 	lastInputInfo.cbSize = (UInt32)sizeof(lastInputInfo);
 	lastInputInfo.dwTime = 0;
 
-	if (SystemAccess::GetLastInputInfo(&lastInputInfo))
-	{
+	if(SystemAccess::GetLastInputInfo(&lastInputInfo)) {
 		float lastInputTicks = (float)lastInputInfo.dwTime;
 		idleTicks = systemUptime - lastInputTicks;
 	}

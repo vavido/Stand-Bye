@@ -21,7 +21,7 @@
 #define MAX_NET_DEFAULT "1200"                   /*in kBytes/s*/
 #define MAX_RAM_DEFAULT "50"                     /*in percent*/
 #define WAIT_TIME_DEFAULT "300"                  /*in seconds*/
-#define PROC_EXCP_DEFAULT ""                     /*paths to exception processes*/
+#define PROC_EXCP_DEFAULT gcnew List<String^>()                     /*paths to exception processes*/
 
 using namespace System;
 using namespace System::ComponentModel;

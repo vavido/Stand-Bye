@@ -237,6 +237,9 @@
     <ClCompile Include="winMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Cassia">
+      <HintPath>C:\Users\matth\Downloads\Cassia.dll</HintPath>
+    </Reference>
     <Reference Include="CSCore">
       <HintPath>C:\Users\matth\Downloads\CSCore.dll</HintPath>
     </Reference>

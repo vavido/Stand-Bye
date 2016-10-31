@@ -15,7 +15,7 @@
 #include <stdio.h>//To get Processes
 #include <tchar.h>//To get Processes
 #include <lmcons.h> //To get user name
-#include <WtsApi32.h>
+
 
 using namespace System::Diagnostics;
 using namespace System::Collections::Generic;
@@ -24,6 +24,9 @@ using System::Windows::Forms::Timer;
 using System::Windows::Forms::Application;
 using System::Windows::Forms::PowerState;
 struct IAudioMeterInformation; //To avoid cross linking
+using Cassia::TerminalServicesManager;
+using Cassia::ITerminalServer;
+using Cassia::ITerminalServicesSession;
 
 public ref class SystemAccess {
 private:

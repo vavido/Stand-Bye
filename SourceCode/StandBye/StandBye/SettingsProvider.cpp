@@ -74,7 +74,11 @@ void SettingsProvider::setSetting(SettingName name, const int value) {
 };
 
 List<String^>^ SettingsProvider::getProcessList() {
-	return SettingsProvider::getSettingbyName(SettingName::PROC_EXCP)->GetValue();
+	Setting ^proc = SettingsProvider::getSettingbyName(SettingName::PROC_EXCP);
+	if(proc == nullptr) {
+		return nullptr;
+	}
+	return proc->GetValue();
 };
 
 bool SettingsProvider::addProcessToProcessList(String^ process) {
@@ -159,8 +163,7 @@ bool SettingsProvider::writeSettingsFile() {
 
 	StreamWriter^ writer;
 	try {
-		StreamWriter^ writer = gcnew StreamWriter(getSettingsFilePath());
-
+		writer = gcnew StreamWriter(getSettingsFilePath());
 
 		for each (Setting^ set in SettingsList) {
 			String^ all_values = "";
@@ -168,8 +171,9 @@ bool SettingsProvider::writeSettingsFile() {
 			for each(String^ val in set->GetValue()) {
 				all_values = all_values + "'" + val + "'" + ",";
 			}
-			all_values = all_values->Substring(0, all_values->Length - 1);
-
+			if(all_values->Length > 0) {
+				all_values = all_values->Substring(0, all_values->Length - 1);
+			}
 			//If Setting has no value
 			if(all_values == "") {
 				all_values = "''";
@@ -272,8 +276,8 @@ String^ SettingsProvider::getSettingsFilePath() {
 };
 
 Setting^ SettingsProvider::getSettingbyName(SettingName name) {
-	//Returns setting with equal name
 
+	//Returns setting with equal name
 	for each (Setting^ set in SettingsList) {
 		if(set->GetName() == name) {
 			return set;

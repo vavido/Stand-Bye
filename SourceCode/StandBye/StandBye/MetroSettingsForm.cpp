@@ -13,8 +13,7 @@
 #include "MetroSettingsForm.h"
 #include "mainApplication.h"
 using namespace StandBye;
-void StandBye::MetroSettingsForm::PrepareForm()
-{
+void StandBye::MetroSettingsForm::PrepareForm() {
 	//Focus on first tabPage
 	metroTabControlMain->SelectedTab = metroTabPageGeneral;
 
@@ -32,7 +31,7 @@ void StandBye::MetroSettingsForm::PrepareForm()
 
 	//Sets version
 	String^ versionText = gcnew String("v" + APP_VERSION);
-	if (SystemAccess::isPortable()) {
+	if(SystemAccess::isPortable()) {
 		versionText += " PORTABLE";
 	}
 	versionText += "\n" + L"(c) Florian Baader, Stephan Le, Matthias Weirich";
@@ -62,8 +61,7 @@ void StandBye::MetroSettingsForm::PrepareForm()
 	this->Activate();
 }
 
-void StandBye::MetroSettingsForm::cleanResources()
-{
+void StandBye::MetroSettingsForm::cleanResources() {
 	delete system_access;
 	system_watcher->Stop();
 	delete system_watcher;
@@ -73,8 +71,7 @@ void StandBye::MetroSettingsForm::cleanResources()
 	delete res_manIMG;
 }
 
-void StandBye::MetroSettingsForm::registerEvents()
-{
+void StandBye::MetroSettingsForm::registerEvents() {
 	//Main
 	this->metroButtonOK->Click += gcnew System::EventHandler(this, &MetroSettingsForm::metroButtonOK_Click);
 	this->metroButtonCancel->Click += gcnew System::EventHandler(this, &MetroSettingsForm::metroButtonCancel_Click);
@@ -144,8 +141,7 @@ double StandBye::MetroSettingsForm::getTextAsDouble(String^ text) {
 	text = text->Replace(".", ",");
 	try {
 		return Convert::ToDouble(text);
-	}
-	catch (Exception^) {
+	} catch(Exception^) {
 		return -1;
 	}
 }
@@ -153,13 +149,13 @@ double StandBye::MetroSettingsForm::getTextAsDouble(String^ text) {
 String^ StandBye::MetroSettingsForm::FormatDigits(double value) {
 	String^ formatter = "";
 
-	for (int x = 1; x < 1000; x = x * 10) {
-		if (value > x) {
+	for(int x = 1; x < 1000; x = x * 10) {
+		if(value > x) {
 			formatter += "0";
 		}
 	}
 
-	if (!(Math::Floor(value) == value)) {
+	if(!(Math::Floor(value) == value)) {
 		//Number has comma
 		formatter += ".0";
 	}
@@ -169,13 +165,11 @@ String^ StandBye::MetroSettingsForm::FormatDigits(double value) {
 }
 
 void MetroSettingsForm::changeLabelBackgroundColor(MetroFramework::Controls::MetroLabel^ label, double setValue, double realTimeValue, bool isActive) {
-	if (setValue > realTimeValue && isActive) {
+	if(setValue > realTimeValue && isActive) {
 		label->BackColor = lightGreen;
-	}
-	else if(isActive){
+	} else if(isActive) {
 		label->BackColor = lightRed;
-	}
-	else {
+	} else {
 		label->BackColor = Color::LightGray;
 	}
 
@@ -207,11 +201,10 @@ System::Void MetroSettingsForm::timerUIRefresh_Tick(System::Object^, System::Eve
 	metroToolTip1->SetToolTip(metroLabelCurNET, String::Format("Now: {0:00.00} MBit/s", system_access->GetMetric(SystemAccess::SystemMetric::NETWORK) / 1000));
 
 	//Sets icon of status tile
-	if (parent->isSystemBusy(system_watcher)) {
+	if(parent->isSystemBusy(system_watcher)) {
 		this->metroTileCanceledStatus->TileImage = (System::Drawing::Image^) res_manIMG->GetObject("CIRCLE_UNCHECKED");
 		this->metroTileCanceledStatus->Text = res_man->GetString("standby_canceled", CultureInfo::DefaultThreadCurrentCulture);
-	}
-	else {
+	} else {
 		this->metroTileCanceledStatus->TileImage = (System::Drawing::Image^) res_manIMG->GetObject("CIRCLE_CHECKED");
 		this->metroTileCanceledStatus->Text = res_man->GetString("standby_activated", CultureInfo::DefaultThreadCurrentCulture);
 	}
@@ -222,10 +215,10 @@ System::Void MetroSettingsForm::timerUIRefresh_Tick(System::Object^, System::Eve
 System::Void MetroSettingsForm::metroButtonOK_Click(System::Object^, System::EventArgs^) {
 	//Check Limits
 	//Checks if Wait-Time is over the limit
-	if (!isWaitTimeOverMin()) {
+	if(!isWaitTimeOverMin()) {
 		return;
 	}
-	
+
 	LOG("SettingsForm: OK Button Clicked");
 	//disables Form;
 	this->Visible = false;
@@ -242,13 +235,12 @@ System::Void MetroSettingsForm::metroButtonAddFromFile_Click(System::Object^, Sy
 	ofd->Filter = "exe files(*.exe)|*.exe";
 	ofd->FilterIndex = 1;
 	ofd->RestoreDirectory = true;
-	if (ofd->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-		if (ofd->CheckFileExists != false) {
-			if (settings_provider->addProcessToProcessList(ofd->FileName)) {
+	if(ofd->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+		if(ofd->CheckFileExists != false) {
+			if(settings_provider->addProcessToProcessList(ofd->FileName)) {
 				//If item is not already existing...
 				listViewProc->Items->Add(gcnew ProcessItem(ofd->FileName, listViewProc));
-			}
-			else {
+			} else {
 				//The process has already been added
 				String^ msg = res_man->GetString("msg_processAlreadyAdded", CultureInfo::DefaultThreadCurrentCulture);
 				MessageWindow^ msgWin = gcnew MessageWindow(msg, Windows::Forms::MessageBoxButtons::OK);
@@ -260,11 +252,11 @@ System::Void MetroSettingsForm::metroButtonAddFromFile_Click(System::Object^, Sy
 System::Void MetroSettingsForm::metroButtonAddFromList_Click(System::Object^, System::EventArgs^) {
 	using namespace StandBye;
 	ProcessSelectionForm^ ProcForm = gcnew ProcessSelectionForm;
-	if (ProcForm->ShowDialog() == Windows::Forms::DialogResult::OK) {
-		if (ProcForm->selectedProcessPath != "") {
+	if(ProcForm->ShowDialog() == Windows::Forms::DialogResult::OK) {
+		if(ProcForm->selectedProcessPath != "") {
 			for each(ListViewItem^ item in listViewProc->Items) {
 				ProcessItem^ p = (ProcessItem^)item;
-				if (p->GetPath() == ProcForm->selectedProcessPath) {
+				if(p->GetPath() == ProcForm->selectedProcessPath) {
 					MessageBox::Show(nullptr, "Process has already been added!", "Error!");
 					return;
 				}
@@ -284,10 +276,9 @@ System::Void MetroSettingsForm::listViewProc_SelectedIndexChanged(System::Object
 	metroButtonRemove->Enabled = (listViewProc->SelectedItems->Count > 0);
 }
 System::Void MetroSettingsForm::metroToggleView_CheckedChanged(System::Object^, System::EventArgs^) {
-	if (metroToggleView->Checked) {
+	if(metroToggleView->Checked) {
 		listViewProc->View = Windows::Forms::View::Details;
-	}
-	else {
+	} else {
 		listViewProc->View = Windows::Forms::View::Tile;
 	}
 }
@@ -306,20 +297,19 @@ void MetroSettingsForm::refreshIcons() {
 	}
 }
 System::Void MetroSettingsForm::metroTrackBarRAM_Scroll(System::Object^, System::Windows::Forms::ScrollEventArgs^) {
-	if (metroLabelRAMPer->Text != String::Format("{0} %", metroTrackBarRAM->Value)) {
+	if(metroLabelRAMPer->Text != String::Format("{0} %", metroTrackBarRAM->Value)) {
 		metroLabelRAMPer->Text = String::Format("{0} %", metroTrackBarRAM->Value);
 	}
 }
 System::Void MetroSettingsForm::metroTrackBarCPU_Scroll(System::Object^, System::Windows::Forms::ScrollEventArgs^) {
-	if (metroLabelCPUPer->Text != String::Format("{0} %", metroTrackBarCPU->Value)) {
+	if(metroLabelCPUPer->Text != String::Format("{0} %", metroTrackBarCPU->Value)) {
 		metroLabelCPUPer->Text = String::Format("{0} %", metroTrackBarCPU->Value);
 	}
 }
 System::Void MetroSettingsForm::metroToggleAutoStart_CheckedChanged(System::Object^, System::EventArgs^) {
 	SystemAccess::SetAutoStart(metroToggleAutoStart->Checked);
 }
-void StandBye::MetroSettingsForm::writeSettings()
-{
+void StandBye::MetroSettingsForm::writeSettings() {
 	//Sets Settings
 	settings_provider->setSetting(SettingName::MAX_CPU, Decimal::ToInt32(metroTrackBarCPU->Value));
 	settings_provider->setSetting(SettingName::MAX_RAM, Decimal::ToInt32(metroTrackBarRAM->Value));
@@ -335,7 +325,7 @@ void StandBye::MetroSettingsForm::writeSettings()
 	settings_provider->setActiveState(SettingName::SHOW_MESSAGES, metroToggleMessages->Checked);
 	settings_provider->setActiveState(SettingName::LOGGING, metroToggleLogging->Checked);
 	settings_provider->setActiveState(SettingName::USE_SLEEPTIME, metroToggleSleepTime->Checked);
-	settings_provider->setSetting(SettingName::SLEEPTIME,dateTimePickerStandbyStart->Value.ToString("HH:mm"));
+	settings_provider->setSetting(SettingName::SLEEPTIME, dateTimePickerStandbyStart->Value.ToString("HH:mm"));
 
 	//Sets language
 	settings_provider->setSetting(SettingName::LANGUAGE, CultureInfo::DefaultThreadCurrentCulture->TwoLetterISOLanguageName);
@@ -347,20 +337,18 @@ void StandBye::MetroSettingsForm::writeSettings()
 	}
 
 	//Standby mode
-	if (metroComboBoxStandby->Text == res_man->GetString("suspend", CultureInfo::DefaultThreadCurrentCulture)) {
+	if(metroComboBoxStandby->Text == res_man->GetString("suspend", CultureInfo::DefaultThreadCurrentCulture)) {
 		settings_provider->setSetting(SettingName::STANDBY_MODE, "SUSPEND");
-	}
-	else {
+	} else {
 		settings_provider->setSetting(SettingName::STANDBY_MODE, "HIBERNATE");
 	}
 
 	//Writes settings to file
-	if (!settings_provider->saveSettingsToFile()) {
+	if(!settings_provider->saveSettingsToFile()) {
 		MessageBox::Show(nullptr, "Writing Settings not successful!", "Writing not successful!");
 	}
 }
-void StandBye::MetroSettingsForm::loadSettings()
-{
+void StandBye::MetroSettingsForm::loadSettings() {
 	//Load Settings
 	metroTrackBarCPU->Value = settings_provider->getThreshold(SettingName::MAX_CPU);
 	metroTrackBarRAM->Value = settings_provider->getThreshold(SettingName::MAX_RAM);
@@ -393,16 +381,18 @@ void StandBye::MetroSettingsForm::loadSettings()
 	//Load Processes
 	refreshIcons();
 	listViewProc->Items->Clear();
-	for each(String^ str in  settings_provider->getProcessList()) {
-		listViewProc->Items->Add(gcnew ProcessItem(str, listViewProc));
+	List<String^> ^procList = settings_provider->getProcessList();
+	if(procList != nullptr) {
+		for each(String^ str in procList) {
+			listViewProc->Items->Add(gcnew ProcessItem(str, listViewProc));
+		}
 	}
 	listViewProc->Update();
 
 	//Standby mode
-	if (settings_provider->getRawSetting(SettingName::STANDBY_MODE) == "SUSPEND") {
+	if(settings_provider->getRawSetting(SettingName::STANDBY_MODE) == "SUSPEND") {
 		metroComboBoxStandby->Text = res_man->GetString("suspend", CultureInfo::DefaultThreadCurrentCulture);
-	}
-	else {
+	} else {
 		metroComboBoxStandby->Text = res_man->GetString("hibernate", CultureInfo::DefaultThreadCurrentCulture);
 	}
 
@@ -423,15 +413,14 @@ System::Void MetroSettingsForm::OpenHomepageOnClick(System::Object^, System::Eve
 }
 System::Void MetroSettingsForm::ReformatTextBoxValueOnReturn(System::Object ^sender, System::Windows::Forms::KeyEventArgs ^e) {
 	using MetroFramework::Controls::MetroTextBox;
-	if (e->KeyCode == Windows::Forms::Keys::Return) {
+	if(e->KeyCode == Windows::Forms::Keys::Return) {
 		Windows::Forms::TextBox^ txt = (Windows::Forms::TextBox^)sender;
 		double value = getTextAsDouble(txt->Text);
-		if (value == -1) {
+		if(value == -1) {
 			//Could not convert
 			txt->Text = "0.0";
 			MessageBox::Show(nullptr, "Please insert numbers from 0 - 9", "Error!");
-		}
-		else {
+		} else {
 			txt->Text = FormatDigits(value);
 		}
 		forceRefreshUI();
@@ -445,8 +434,7 @@ System::Void MetroSettingsForm::ReformatTextBoxValueOnReturn(System::Object ^sen
 void MetroSettingsForm::forceRefreshUI() {
 	timerUIRefresh_Tick(nullptr, nullptr);
 }
-void StandBye::MetroSettingsForm::switchLanguage()
-{
+void StandBye::MetroSettingsForm::switchLanguage() {
 	//Culture
 	CultureInfo^ cul = CultureInfo::DefaultThreadCurrentCulture;
 
@@ -531,12 +519,11 @@ void StandBye::MetroSettingsForm::switchLanguage()
 	this->Update();
 }
 
-void StandBye::MetroSettingsForm::LanguageIndexChanged(System::Object ^, System::EventArgs ^)
-{
+void StandBye::MetroSettingsForm::LanguageIndexChanged(System::Object ^, System::EventArgs ^) {
 	String^ selected_lang = metroComboBoxLanguage->Text;
 
 	for each(CultureInfo^ supported_lang in supportedLanguages) {
-		if (selected_lang == supported_lang->NativeName) {
+		if(selected_lang == supported_lang->NativeName) {
 			CultureInfo::DefaultThreadCurrentCulture = supported_lang;
 			switchLanguage();
 			parent->ReloadContextMenu();
@@ -547,8 +534,7 @@ void StandBye::MetroSettingsForm::LanguageIndexChanged(System::Object ^, System:
 	LOG("Selected language not supported: " + metroComboBoxLanguage->Text);
 }
 
-System::Void StandBye::MetroSettingsForm::metroTilePresMode_Click(System::Object^, System::EventArgs^)
-{
+System::Void StandBye::MetroSettingsForm::metroTilePresMode_Click(System::Object^, System::EventArgs^) {
 	parent->setPresentationMode(!parent->isInPresentationMode());
 	//Change Label of Tile
 	ShowPresModeStatus();
@@ -556,19 +542,16 @@ System::Void StandBye::MetroSettingsForm::metroTilePresMode_Click(System::Object
 	forceRefreshUI();
 }
 
-void StandBye::MetroSettingsForm::ShowPresModeStatus()
-{
-	if (parent->isInPresentationMode()) {
+void StandBye::MetroSettingsForm::ShowPresModeStatus() {
+	if(parent->isInPresentationMode()) {
 		metroTilePresMode->TileImage = (System::Drawing::Image^) res_manIMG->GetObject("CHECKED");
-	}
-	else {
+	} else {
 		metroTilePresMode->TileImage = (System::Drawing::Image^) res_manIMG->GetObject("CROSS");
 	}
 	metroTilePresMode->Update();
 }
 
-void StandBye::MetroSettingsForm::OnMetroTileMouseEnter(System::Object ^sender, System::EventArgs ^)
-{
+void StandBye::MetroSettingsForm::OnMetroTileMouseEnter(System::Object ^sender, System::EventArgs ^) {
 	using MetroFramework::Controls::MetroTile;
 
 	MetroTile^ tile = (MetroTile^)sender;
@@ -578,8 +561,7 @@ void StandBye::MetroSettingsForm::OnMetroTileMouseEnter(System::Object ^sender, 
 	tile->Update();
 }
 
-void StandBye::MetroSettingsForm::OnMetroTileMouseLeave(System::Object ^sender, System::EventArgs ^)
-{
+void StandBye::MetroSettingsForm::OnMetroTileMouseLeave(System::Object ^sender, System::EventArgs ^) {
 	using MetroFramework::Controls::MetroTile;
 
 	MetroTile^ tile = (MetroTile^)sender;
@@ -587,40 +569,34 @@ void StandBye::MetroSettingsForm::OnMetroTileMouseLeave(System::Object ^sender, 
 	tile->Update();
 }
 
-void StandBye::MetroSettingsForm::OnTextBoxMouseEnter(System::Object ^sender, System::EventArgs ^)
-{
+void StandBye::MetroSettingsForm::OnTextBoxMouseEnter(System::Object ^sender, System::EventArgs ^) {
 	Windows::Forms::TextBox^ box = (TextBox^)sender;
 	box->BackColor = Color::LightGray;
 	box->Cursor = Cursors::IBeam;
 	box->Update();
 }
 
-void StandBye::MetroSettingsForm::OnTextBoxMouseLeave(System::Object ^sender, System::EventArgs ^)
-{
+void StandBye::MetroSettingsForm::OnTextBoxMouseLeave(System::Object ^sender, System::EventArgs ^) {
 	Windows::Forms::TextBox^ box = (TextBox^)sender;
 	box->BackColor = box->Parent->BackColor;
 	box->Update();
 }
 
-System::Void StandBye::MetroSettingsForm::metroTileAbout_Click(System::Object^, System::EventArgs^)
-{
+System::Void StandBye::MetroSettingsForm::metroTileAbout_Click(System::Object^, System::EventArgs^) {
 	metroTabControlMain->SelectedTab = metroTabPageAbout;
 }
 
-System::Void StandBye::MetroSettingsForm::metroTileProcesses_Click(System::Object^, System::EventArgs^)
-{
+System::Void StandBye::MetroSettingsForm::metroTileProcesses_Click(System::Object^, System::EventArgs^) {
 	metroTabControlMain->SelectedTab = metroTabPageExcpProcess;
 }
 
-System::Void StandBye::MetroSettingsForm::metroTileSettings_Click(System::Object^, System::EventArgs^)
-{
+System::Void StandBye::MetroSettingsForm::metroTileSettings_Click(System::Object^, System::EventArgs^) {
 	metroTabControlMain->SelectedTab = metroTabPageThresholds;
 }
 
-bool StandBye::MetroSettingsForm::isWaitTimeOverMin()
-{
-	int seconds = (int) getTextAsDouble(textBoxTimeMIN->Text) * 60 + (int) getTextAsDouble(textBoxTimeSEC->Text);
-	if (seconds < 15) {
+bool StandBye::MetroSettingsForm::isWaitTimeOverMin() {
+	int seconds = (int)getTextAsDouble(textBoxTimeMIN->Text) * 60 + (int)getTextAsDouble(textBoxTimeSEC->Text);
+	if(seconds < 15) {
 		// The Wait-Time should not be under 15 seconds
 		MessageWindow^ msgW = gcnew MessageWindow(res_man->GetString("msg_waitTimeMinWarning"), System::Windows::Forms::MessageBoxButtons::OK);
 		msgW->Show();
@@ -631,26 +607,22 @@ bool StandBye::MetroSettingsForm::isWaitTimeOverMin()
 	return true;
 }
 
-System::Void StandBye::MetroSettingsForm::metroTrackBarHDD_Scroll(System::Object^, System::Windows::Forms::ScrollEventArgs^)
-{
-	if (metroLabelHDDStatus->Text != String::Format("{0:0.0} MBit/s", (double)metroTrackBarHDD->Value / 10)) {
+System::Void StandBye::MetroSettingsForm::metroTrackBarHDD_Scroll(System::Object^, System::Windows::Forms::ScrollEventArgs^) {
+	if(metroLabelHDDStatus->Text != String::Format("{0:0.0} MBit/s", (double)metroTrackBarHDD->Value / 10)) {
 		metroLabelHDDStatus->Text = String::Format("{0:0.0} MBit/s", (double)metroTrackBarHDD->Value / 10);
 	}
 }
 
-System::Void StandBye::MetroSettingsForm::metroTrackBarNET_Scroll(System::Object^, System::Windows::Forms::ScrollEventArgs^)
-{
-	if (metroLabelNETStatus->Text != String::Format("{0:0.00} MBit/s", (double)metroTrackBarNET->Value / 200)) {
+System::Void StandBye::MetroSettingsForm::metroTrackBarNET_Scroll(System::Object^, System::Windows::Forms::ScrollEventArgs^) {
+	if(metroLabelNETStatus->Text != String::Format("{0:0.00} MBit/s", (double)metroTrackBarNET->Value / 200)) {
 		metroLabelNETStatus->Text = String::Format("{0:0.00} MBit/s", (double)metroTrackBarNET->Value / 200);
 	}
 }
 
-void StandBye::MetroSettingsForm::ContactLink(System::Object ^, System::EventArgs ^)
-{
+void StandBye::MetroSettingsForm::ContactLink(System::Object ^, System::EventArgs ^) {
 	BasicFunc::openLink("mailto:contact@stand-bye.de");
 }
 
-void StandBye::MetroSettingsForm::OpenLicense(System::Object ^, System::EventArgs ^)
-{
+void StandBye::MetroSettingsForm::OpenLicense(System::Object ^, System::EventArgs ^) {
 	BasicFunc::openLink("http://stand-bye.de/html/license.txt");
 }
